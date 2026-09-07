@@ -11,10 +11,10 @@ export function useElapsedTimer() {
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
 
-  const tick = useCallback((now: number) => {
+  const tick = useCallback(function tickCb(now: number) {
     if (startRef.current !== null) {
       setElapsedMs(now - startRef.current);
-      rafRef.current = requestAnimationFrame(tick);
+      rafRef.current = requestAnimationFrame(tickCb);
     }
   }, []);
 

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +11,10 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as { from?: Location })?.from?.pathname || '/admin';
+  const isFromLocation = (state: unknown): state is { from?: { pathname?: string } } =>
+    typeof state === 'object' && state !== null && 'from' in state;
+
+  const from = (isFromLocation(location.state) ? location.state.from?.pathname : undefined) || '/admin';
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,14 +33,19 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-lg">
+    <div
+      className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,107,107,0.06) 0%, rgba(78,205,196,0.06) 100%)',
+      }}
+    >
+      <div className="w-full max-w-md animate-scale-in">
+        <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <div className="mx-auto mb-4 flex h-18 w-18 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 ring-4 ring-primary/10 h-20 w-20">
               <svg
-                className="h-8 w-8 text-primary"
+                className="h-10 w-10 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -50,13 +58,16 @@ export function LoginPage() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Panel Admin</h1>
-            <p className="mt-1 text-sm text-gray-500">¿Dónde Está Sttutgart?</p>
+            <h1 className="text-2xl font-extrabold text-gray-900">Panel Admin</h1>
+            <p className="mt-1 text-sm text-gray-500">¿Dónde Está Stuttgart? — Administración</p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               {error}
             </div>
           )}
@@ -64,7 +75,7 @@ export function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Correo electrónico
               </label>
               <input
@@ -74,12 +85,12 @@ export function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@uniempresarial.edu.co"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Contraseña
               </label>
               <input
@@ -89,14 +100,14 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover hover:scale-[1.02] hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? (
                 <span className="flex items-center justify-center gap-2">

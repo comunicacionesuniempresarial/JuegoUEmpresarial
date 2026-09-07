@@ -16,10 +16,6 @@ export function AuditLog() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAuditLog();
-  }, []);
-
   async function fetchAuditLog() {
     setLoading(true);
     const { data, error } = await supabase
@@ -33,6 +29,10 @@ export function AuditLog() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchAuditLog();
+  }, []);
 
   if (loading) {
     return (

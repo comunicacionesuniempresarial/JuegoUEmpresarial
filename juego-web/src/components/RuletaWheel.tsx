@@ -7,110 +7,78 @@ interface RuletaWheelProps {
   onSpinEnd: (prize: Prize) => void;
 }
 
-/** Default prizes for the ruleta game — university careers */
-export const DEFAULT_PRIZES: Prize[] = [
-  { id: '1', label: 'Adm. de Empresas', color: '#E63946', probability: 1 },
-  { id: '2', label: 'Finanzas', color: '#457B9D', probability: 1 },
-  { id: '3', label: 'Ing. Industrial', color: '#2A9D8F', probability: 1 },
-  { id: '4', label: 'Ing. Software', color: '#E9C46A', probability: 1 },
-  { id: '5', label: 'Marketing', color: '#F4A261', probability: 1 },
-  { id: '6', label: 'Neg. Internac.', color: '#1D3557', probability: 1 },
-  { id: '7', label: 'Neg. Turísticos', color: '#6D597A', probability: 1 },
-];
-
 export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps) {
   const rotationRef = useRef(0);
   const [currentRotation, setCurrentRotation] = useState(0);
 
   const spin = useCallback(() => {
     const count = prizes.length;
-    const segmentAngle = 360 / count;
-
-    // Random extra rotations (5-8 full spins) + random segment offset
     const extraSpins = (5 + Math.floor(Math.random() * 4)) * 360;
+    const segmentAngle = 360 / count;
     const randomSegment = Math.floor(Math.random() * count);
-    const segmentOffset = randomSegment * segmentAngle + segmentAngle / 2;
-
-    const totalRotation = rotationRef.current + extraSpins + segmentOffset;
+    
+    // Girar para que el puntero quede en el medio del segmento ganador
+    const totalRotation = rotationRef.current + extraSpins + (randomSegment * segmentAngle) + (segmentAngle / 2);
     rotationRef.current = totalRotation;
     setCurrentRotation(totalRotation);
 
-    // After animation ends (4s), determine which prize landed
     setTimeout(() => {
-      const normalizedAngle = totalRotation % 360;
-      const winIndex = Math.floor(
-        (count - Math.floor(normalizedAngle / segmentAngle)) % count,
-      );
-      onSpinEnd(prizes[winIndex]);
+      onSpinEnd(prizes[randomSegment]);
     }, 4100);
   }, [prizes, onSpinEnd]);
 
   useEffect(() => {
-    if (isSpinning) {
-      spin();
-    }
+    if (isSpinning) spin();
   }, [isSpinning, spin]);
 
-  const count = prizes.length;
-  const segmentAngle = 360 / count;
+  // Generar path para cada segmento SVG
+  const getPath = (i: number, count: number) => {
+    const angle = (360 / count);
+    const startAngle = i * angle;
+    const endAngle = (i + 1) * angle;
+    
+    const x1 = 50 + 45 * Math.cos((startAngle - 90) * Math.PI / 180);
+    const y1 = 50 + 45 * Math.sin((startAngle - 90) * Math.PI / 180);
+    const x2 = 50 + 45 * Math.cos((endAngle - 90) * Math.PI / 180);
+    const y2 = 50 + 45 * Math.sin((endAngle - 90) * Math.PI / 180);
+    
+    return `M 50 50 L ${x1} ${y1} A 45 45 0 0 1 ${x2} ${y2} Z`;
+  };
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* ── Wheel ── */}
-      <div
-        className="ruleta-wheel aspect-square w-full max-w-[420px] rounded-full shadow-xl"
-        style={{
-          background: `conic-gradient(
-            ${prizes.map((p, i) => {
-              const startDeg = i * segmentAngle;
-              const endDeg = (i + 1) * segmentAngle;
-              return `${p.color} ${startDeg}deg ${endDeg}deg`;
-            }).join(', ')}
-          )`,
-          transform: `rotate(${currentRotation}deg)`,
-          transition: isSpinning
-            ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
-            : 'none',
-          willChange: 'transform',
-        }}
+      <svg
+        viewBox="0 0 100 100"
+        className="w-full max-w-[420px] drop-shadow-xl transition-transform duration-[4000ms] cubic-bezier(0.17,0.67,0.12,0.99)"
+        style={{ transform: `rotate(${currentRotation}deg)` }}
       >
-        {/* ── Segment labels — radial, responsive ── */}
-        {prizes.map((prize, i) => {
-          const angle = i * segmentAngle + segmentAngle / 2;
-          const isBottomHalf = angle > 90 && angle < 270;
-          const isYellow = prize.color === '#E9C46A';
-          return (
-            <div
-              key={prize.id}
-              className="absolute inset-0 flex items-start justify-center"
-              style={{ transform: `rotate(${angle}deg)` }}
+        {prizes.map((p, i) => (
+          <g key={p.id}>
+            <path d={getPath(i, prizes.length)} fill={p.color} stroke="white" strokeWidth="0.5" />
+            <text
+              x="50"
+              y="20"
+              fill="white"
+              fontSize="6"
+              fontWeight="bold"
+              textAnchor="middle"
+              transform={`rotate(${(i + 0.5) * (360 / prizes.length)} 50 50)`}
+              className="pointer-events-none drop-shadow-md"
             >
-              <span
-                className={`mt-[11%] block -translate-y-1/2 whitespace-nowrap text-[11px] font-bold uppercase leading-tight drop-shadow-md sm:text-xs md:text-sm ${
-                  isBottomHalf ? 'rotate-180' : ''
-                } ${isYellow ? 'text-gray-900' : 'text-white'}`}
-              >
-                {prize.label}
-              </span>
-            </div>
-          );
-        })}
-
-        {/* ── Center hub ── */}
-        <div className="absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
-          <img
-            src="/images/stuttgart-ruleta.jpg"
-            alt="Stuttgart"
-            className="h-12 w-12 rounded-full object-cover sm:h-14 sm:w-14"
-          />
-        </div>
+              {p.label}
+            </text>
+          </g>
+        ))}
+      </svg>
+      
+      {/* Centro */}
+      <div className="absolute h-16 w-16 rounded-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
+        <img src="/images/stuttgart-ruleta.jpg" className="h-full w-full rounded-full object-cover" />
       </div>
 
-      {/* ── Pointer / Arrow ── */}
-      <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2">
-        <svg width="32" height="32" viewBox="0 0 32 32" className="drop-shadow-lg">
-          <polygon points="16,0 4,28 28,28" fill="#FF6B6B" stroke="#fff" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
+      {/* Puntero */}
+      <div className="absolute -top-2 z-20">
+        <div className="h-0 w-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-primary" />
       </div>
     </div>
   );
