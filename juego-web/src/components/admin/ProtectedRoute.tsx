@@ -2,7 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, admin, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -13,8 +13,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user || !admin || !['admin', 'super_admin'].includes(admin.role)) {
+    return <Navigate to={user ? '/' : '/login'} state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

@@ -4,15 +4,33 @@
    Global Theme & Typography
    ============================================================ */
 @theme {
-  --color-primary: #FF6B6B;
-  --color-secondary: #4ECDC4;
-  --color-accent: #FFE66D;
-  --color-primary-hover: #FF5252;
-  --color-secondary-hover: #3DBDB4;
-  --color-accent-hover: #FFD93D;
+  --color-primary: #e85d4a;
+  --color-secondary: #167c80;
+  --color-accent: #f2b84b;
+  --color-primary-hover: #c94838;
+  --color-secondary-hover: #0f6266;
+  --color-accent-hover: #d99b32;
 
   --font-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Poppins', sans-serif;
+}
+
+:root {
+  color: #24303b;
+  background: #f7f3ed;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f7f3ed;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ============================================================

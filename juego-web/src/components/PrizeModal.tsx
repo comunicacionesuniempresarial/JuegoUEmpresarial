@@ -13,7 +13,12 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 backdrop-blur-md animate-fade-in p-4">
-      <div className="relative w-full max-w-md animate-scale-in">
+      <div
+        className="relative w-full max-w-md animate-scale-in"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="prize-modal-title"
+      >
         {/* Dynamic Multi-Color Confetti */}
         <div className="pointer-events-none absolute inset-x-0 -top-10 overflow-hidden h-40" aria-hidden>
           <div className="confetti-particle" />
@@ -45,11 +50,11 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
             ¡Resultado Oficial!
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <h2 id="prize-modal-title" className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
             ¡Felicidades! 🎉
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-gray-500">
-            Tu vocación universitaria para triunfar es:
+            Tu premio es:
           </p>
 
           {/* Prize Presentation Card */}
@@ -57,8 +62,8 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
             <span className="text-xl sm:text-2xl font-black text-gray-900 block leading-tight">
               {prize}
             </span>
-            <span className="mt-1 inline-block text-[11px] font-semibold text-gray-600">
-              Programa de Pregrado Uniempresarial
+            <span className="mt-1 inline-block text-xs font-semibold text-gray-600">
+              Premio oficial del juego Uniempresarial
             </span>
           </div>
 

@@ -159,7 +159,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
               <span className="text-xs leading-relaxed text-gray-600 group-hover:text-gray-800 transition-colors">
                 Autorizo a Uniempresarial para el tratamiento de mis datos personales según la{' '}
                 <a
-                  href="/politicas"
+                  href="https://uniempresarial.edu.co/wp-content/uploads/2026/08/Tratamiento-de-Datos-Personales.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-bold text-primary underline hover:text-primary-hover"

@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 export function Footer() {
   return (
     <footer className="glass-panel border-t border-white/30">
@@ -10,12 +8,14 @@ export function Footer() {
           </div>
 
           <nav className="flex items-center gap-4">
-            <Link
-              to="/politicas"
+            <a
+              href="https://uniempresarial.edu.co/wp-content/uploads/2026/08/Tratamiento-de-Datos-Personales.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
             >
               Políticas de Privacidad
-            </Link>
+            </a>
           </nav>
         </div>
       </div>

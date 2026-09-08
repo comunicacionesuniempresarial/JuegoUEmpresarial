@@ -42,24 +42,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    let resolveGeneration = 0;
+
+    const resolveSession = async (currentSession: Session | null, generation: number) => {
       setSession(currentSession);
       if (currentSession?.user) {
-        fetchAdminProfile(currentSession.user.id);
+        await fetchAdminProfile(currentSession.user.id);
+      } else {
+        setAdmin(null);
       }
-      setLoading(false);
+      // Only clear loading if this is still the latest resolution
+      if (generation === resolveGeneration) {
+        setLoading(false);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      const gen = ++resolveGeneration;
+      void resolveSession(currentSession, gen);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      if (newSession?.user) {
-        fetchAdminProfile(newSession.user.id);
-      } else {
-        setAdmin(null);
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      // Only show loading spinner for sign-in events, not token refreshes
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        setLoading(true);
       }
-      setLoading(false);
+      const gen = ++resolveGeneration;
+      void resolveSession(newSession, gen);
     });
 
     return () => subscription.unsubscribe();
@@ -87,4 +98,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-

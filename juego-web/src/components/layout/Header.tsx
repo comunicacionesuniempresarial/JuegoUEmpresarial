@@ -37,7 +37,7 @@ export function Header() {
     }`;
 
   return (
-    <header className="glass-panel sticky top-0 z-50 border-b border-white/40 bg-white/85 backdrop-blur-md h-14 shrink-0 transition-all">
+    <header className="glass-panel sticky top-0 z-50 border-b border-[#eadfd2] bg-[#fffdf9]/95 backdrop-blur-md h-16 shrink-0 transition-all">
       <div className="mx-auto h-full max-w-7xl px-3 sm:px-6 lg:px-8">
         <div className="flex h-full items-center justify-between">
           <NavLink
@@ -57,11 +57,11 @@ export function Header() {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-black text-primary tracking-tight leading-none">
+              <span className="text-base sm:text-lg font-black text-slate-800 tracking-tight leading-none">
                 ¿Dónde Está Stuttgart?
               </span>
               <span className="text-[9px] font-bold text-gray-400 tracking-wider uppercase leading-none mt-0.5">
-                Uniempresarial
+                Juego para estudiantes
               </span>
             </div>
           </NavLink>
@@ -70,13 +70,13 @@ export function Header() {
           <nav className="flex items-center gap-2 sm:gap-3">
             <div className="hidden md:flex items-center gap-2">
               <NavLink to="/" end className={linkClass} onClick={() => sound.playClick()}>
-                🏠 Inicio
+                Inicio
               </NavLink>
               <NavLink to="/ruleta" className={linkClass} onClick={() => sound.playClick()}>
-                🎡 Ruleta
+                Ruleta
               </NavLink>
               <NavLink to="/busqueda" className={linkClass} onClick={() => sound.playClick()}>
-                🔍 Búsqueda
+                Búsqueda
               </NavLink>
               <NavLink
                 to="/admin"
@@ -89,7 +89,7 @@ export function Header() {
                   }`
                 }
               >
-                Admin ⚙️
+                Admin
               </NavLink>
             </div>
 
