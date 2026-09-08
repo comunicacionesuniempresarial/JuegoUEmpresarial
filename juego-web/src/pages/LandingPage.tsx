@@ -57,7 +57,7 @@ export function LandingPage() {
             <div className="flex justify-center my-2 sm:my-3">
               <div className="relative">
                 <img
-                  src="/images/studgard-thumbs-up.png"
+                  src="/images/stuttgart-sonriente.png"
                   alt="Stuttgart Ruleta"
                   className="h-28 sm:h-36 lg:h-44 w-auto object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
                 />

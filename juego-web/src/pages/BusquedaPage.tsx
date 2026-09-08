@@ -121,7 +121,7 @@ export function BusquedaPage() {
               <div className="animate-scale-in flex max-w-md w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center text-white shadow-2xl backdrop-blur-xl">
                 <div className="relative">
                   <img
-                    src="/images/stuttgart-ruleta.jpg"
+                    src="/images/stuttgart-investigador.png"
                     alt="Stuttgart Encontrado"
                     className="h-28 sm:h-36 w-auto rounded-2xl shadow-2xl drop-shadow-2xl border-2 border-white/50"
                   />

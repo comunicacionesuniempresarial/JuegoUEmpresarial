@@ -70,7 +70,7 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
           {/* Stuttgart Mascot Cheer */}
           <div className="mb-5 flex items-center justify-center gap-3 bg-gray-50 rounded-2xl p-2.5 border border-gray-100">
             <img
-              src="/images/studgard-thumbs-up.png"
+              src="/images/stuttgart-ganador.png"
               alt="Stuttgart"
               className="h-16 w-auto drop-shadow-md animate-bounce-in"
             />

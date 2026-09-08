@@ -14,9 +14,9 @@ const STUTTGART_MESSAGES: Record<StuttgartState, string> = {
 };
 
 const STUTTGART_IMAGES: Record<StuttgartState, string> = {
-  idle: '/images/studgard-pointing.png',
-  spinning: '/images/studgard-open.png',
-  won: '/images/studgard-thumbs-up.png',
+  idle: '/images/stuttgart-sonriente.png',
+  spinning: '/images/stuttgart-ruleta.png',
+  won: '/images/stuttgart-ganador.png',
 };
 
 export function RuletaPage() {

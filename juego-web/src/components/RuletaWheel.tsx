@@ -170,7 +170,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
       {/* ── Center hub ── */}
       <div className="absolute z-20 flex h-[72px] w-[72px] items-center justify-center overflow-hidden rounded-full border-[5px] border-[#fffdf9] bg-[#fffdf9] shadow-[0_0_24px_rgba(70,55,40,0.28)] sm:h-[96px] sm:w-[96px]">
         <img
-          src="/images/stuttgart-ruleta.jpg"
+          src="/images/stuttgart-ruleta.png"
           alt="Stuttgart"
           className="h-full w-full rounded-full object-cover"
         />
