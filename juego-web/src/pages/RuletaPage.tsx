@@ -51,7 +51,7 @@ export function RuletaPage() {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden bg-[#f7f3ed] p-4 sm:flex-row sm:gap-8 sm:p-8 lg:gap-14">
+    <div className="relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden bg-[radial-gradient(circle_at_15%_20%,#fff1ca_0,transparent_26%),radial-gradient(circle_at_85%_75%,#dff8f5_0,transparent_30%),linear-gradient(135deg,#fffaf2_0%,#fff5e7_45%,#effbfa_100%)] p-4 sm:flex-row sm:gap-8 sm:p-8 lg:gap-14">
 
       {/* ── Left: Stuttgart ── */}
       <div className="flex w-full max-w-[250px] flex-col items-center text-center sm:w-56 sm:max-w-none">
@@ -78,7 +78,7 @@ export function RuletaPage() {
           className={`mt-5 min-h-16 w-full touch-manipulation rounded-2xl px-8 py-4 text-xl font-black uppercase tracking-wider text-white shadow-xl transition-all duration-200 sm:text-2xl ${
             isSpinning
               ? 'cursor-not-allowed bg-slate-300 opacity-70'
-              : 'bg-primary hover:bg-primary-hover hover:scale-105 active:scale-95 hover:shadow-[0_0_32px_rgba(232,93,74,0.35)]'
+              : 'bg-gradient-to-r from-[#ff5a36] via-[#ff7834] to-[#ffb000] hover:brightness-105 hover:scale-105 active:scale-95 hover:shadow-[0_0_34px_rgba(255,112,42,0.52)]'
           }`}
         >
           {isSpinning ? (
