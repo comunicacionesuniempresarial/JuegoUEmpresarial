@@ -74,6 +74,8 @@ function ChallengeCard({
           <img
             src={image}
             alt={imageAlt}
+            loading={isRoulette ? 'eager' : 'lazy'}
+            decoding="async"
             className="relative h-40 w-auto object-contain drop-shadow-[0_18px_20px_rgba(13,27,62,0.22)] transition duration-500 group-hover:scale-110 sm:h-52"
           />
           <span

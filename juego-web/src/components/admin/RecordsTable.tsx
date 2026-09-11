@@ -5,8 +5,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { RecordDetailModal } from './RecordDetailModal';
 import { RecordEditModal } from './RecordEditModal';
 import type { Registration, DateRange } from '../../types';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,6 +24,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
   const [quickDate, setQuickDate] = useState<QuickDate>('all');
   const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
   const [page, setPage] = useState(1);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
 
   // Modals
   const [detailRecord, setDetailRecord] = useState<Registration | null>(null);
@@ -39,7 +38,10 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
   const fetchLocalRecords = useCallback(async () => {
     if (propRecords) return;
     setLocalLoading(true);
-    let query = supabase.from('records').select('*').order('created_at', { ascending: false });
+    let query = supabase
+      .from('records')
+      .select('id, nombre, telefono, correo, carrera, juego, resultado, consentimiento, consentimiento_timestamp, created_at, deleted_at')
+      .order('created_at', { ascending: false });
     if (gameFilter !== 'all') query = query.eq('juego', gameFilter);
     const { data } = await query;
     setLocalRecords((data || []) as Registration[]);
@@ -152,31 +154,40 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
   };
 
   // Export PDF
-  const exportPDF = () => {
+  const exportPDF = async () => {
     sound.playClick();
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.setTextColor(40);
-    doc.text('Registros — ¿Dónde Está Stuttgart? (Uniempresarial)', 14, 20);
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Generado el: ${new Date().toLocaleString('es-CO')} | Total: ${filteredRecords.length}`, 14, 28);
-    const tableData = filteredRecords.map((r) => [
-      r.nombre,
-      r.telefono,
-      r.juego.toUpperCase(),
-      r.resultado || '—',
-      r.created_at ? new Date(r.created_at).toLocaleString('es-CO') : '—',
-    ]);
-    autoTable(doc, {
-      startY: 34,
-      head: [['Nombre', 'Teléfono', 'Juego', 'Resultado', 'Fecha']],
-      body: tableData,
-      theme: 'striped',
-      headStyles: { fillColor: [255, 107, 107] },
-      styles: { fontSize: 8 },
-    });
-    doc.save(`registros-uniempresarial-${new Date().toISOString().slice(0, 10)}.pdf`);
+    setIsExportingPDF(true);
+    try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ]);
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.setTextColor(40);
+      doc.text('Registros — ¿Dónde Está Stuttgart? (Uniempresarial)', 14, 20);
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generado el: ${new Date().toLocaleString('es-CO')} | Total: ${filteredRecords.length}`, 14, 28);
+      const tableData = filteredRecords.map((r) => [
+        r.nombre,
+        r.telefono,
+        r.juego.toUpperCase(),
+        r.resultado || '—',
+        r.created_at ? new Date(r.created_at).toLocaleString('es-CO') : '—',
+      ]);
+      autoTable(doc, {
+        startY: 34,
+        head: [['Nombre', 'Teléfono', 'Juego', 'Resultado', 'Fecha']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [255, 107, 107] },
+        styles: { fontSize: 8 },
+      });
+      doc.save(`registros-uniempresarial-${new Date().toISOString().slice(0, 10)}.pdf`);
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
   // Handle soft delete
@@ -282,8 +293,8 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
             <button onClick={exportCSV} className="flex items-center gap-1.5 rounded-xl border border-secondary/30 bg-secondary/10 px-3.5 py-2 text-xs font-bold text-secondary hover:bg-secondary/20 active:scale-95 transition-all shadow-xs">
               <span>📊</span><span>CSV</span>
             </button>
-            <button onClick={exportPDF} className="flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-bold text-primary hover:bg-primary/20 active:scale-95 transition-all shadow-xs">
-              <span>📕</span><span>PDF</span>
+            <button onClick={exportPDF} disabled={isExportingPDF} className="flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-bold text-primary hover:bg-primary/20 active:scale-95 disabled:cursor-wait disabled:opacity-50 transition-all shadow-xs">
+              <span>📕</span><span>{isExportingPDF ? 'Generando…' : 'PDF'}</span>
             </button>
           </div>
         </div>

@@ -4,13 +4,13 @@ import { RegistrationModal } from '../components/RegistrationModal';
 import { sound } from '../lib/sound';
 
 const CAREER_IMAGES = [
-  { id: '1', src: '/images/Administración de Empresas.png', alt: 'Administración de Empresas', name: 'Administración de Empresas' },
-  { id: '2', src: '/images/Finanzas y Comercio Exterior.png', alt: 'Finanzas y Comercio Exterior', name: 'Finanzas y Comercio Exterior' },
-  { id: '3', src: '/images/ING INDUSTRIAL.png', alt: 'Ingeniero Industrial', name: 'Ingeniería Industrial' },
-  { id: '4', src: '/images/ING SOFTWARE.png', alt: 'Ingeniería de Software', name: 'Ingeniería de Software' },
-  { id: '5', src: '/images/Marketing.png', alt: 'Marketing', name: 'Marketing' },
-  { id: '6', src: '/images/Negocios Internacionales.png', alt: 'Negocios Internacionales', name: 'Negocios Internacionales' },
-  { id: '7', src: '/images/Negocios Turísticos y Hoteleros.png', alt: 'Negocios Turísticos y Hoteleros', name: 'Negocios Turísticos y Hoteleros' },
+  { id: '1', src: '/images/Administración de Empresas.jpg', alt: 'Administración de Empresas', name: 'Administración de Empresas' },
+  { id: '2', src: '/images/Finanzas y Comercio Exterior.jpg', alt: 'Finanzas y Comercio Exterior', name: 'Finanzas y Comercio Exterior' },
+  { id: '3', src: '/images/ING INDUSTRIAL.jpg', alt: 'Ingeniero Industrial', name: 'Ingeniería Industrial' },
+  { id: '4', src: '/images/ING SOFTWARE.jpg', alt: 'Ingeniería de Software', name: 'Ingeniería de Software' },
+  { id: '5', src: '/images/Marketing.jpg', alt: 'Marketing', name: 'Marketing' },
+  { id: '6', src: '/images/Negocios Internacionales.jpg', alt: 'Negocios Internacionales', name: 'Negocios Internacionales' },
+  { id: '7', src: '/images/Negocios Turísticos y Hoteleros.jpg', alt: 'Negocios Turísticos y Hoteleros', name: 'Negocios Turísticos y Hoteleros' },
 ];
 
 function getRandomIndex(excluding: number | null = null): number {
@@ -152,7 +152,7 @@ export function BusquedaPage() {
           </div>
 
           {countdown !== null && (
-            <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-sm">
+            <div role="status" aria-live="assertive" className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-sm">
               <span className="text-sm font-black uppercase tracking-[0.24em] text-white/80">Prepárate</span>
               <span key={countdown} className="mt-2 animate-scale-in text-8xl font-black leading-none text-white drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]">{countdown}</span>
               <span className="mt-4 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white">Encuentra a Stuttgart</span>
@@ -170,6 +170,8 @@ export function BusquedaPage() {
           <img
             src={currentImage.src}
             alt={currentImage.alt}
+            loading="eager"
+            decoding="async"
             className={`block max-h-full max-w-full select-none object-contain transition-transform duration-300 ease-out drop-shadow-md ${
               isZoomed ? 'scale-150 sm:scale-175' : 'scale-100'
             }`}
@@ -184,6 +186,8 @@ export function BusquedaPage() {
                   <img
                     src="/images/stuttgart-investigador.png"
                     alt="Stuttgart Encontrado"
+                    loading="lazy"
+                    decoding="async"
                     className="h-28 sm:h-36 w-auto rounded-2xl shadow-2xl drop-shadow-2xl border-2 border-white/50"
                   />
                   <span className="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-lg shadow-lg animate-bounce">
@@ -255,7 +259,8 @@ export function BusquedaPage() {
             {!hasFound ? (
               <button
                 onClick={handleFound}
-                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-orange-500 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-95 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
+                disabled={countdown !== null}
+                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-orange-500 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
               >
                 <span>✋ ¡LO ENCONTRÉ!</span>
               </button>
@@ -272,6 +277,8 @@ export function BusquedaPage() {
             <img
               src={companionImage}
               alt="Stuttgart"
+              loading="lazy"
+              decoding="async"
               className="hidden sm:block h-12 w-12 object-contain drop-shadow-md transition-all duration-300"
             />
           </div>

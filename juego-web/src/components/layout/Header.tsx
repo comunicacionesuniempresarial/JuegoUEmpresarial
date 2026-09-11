@@ -52,6 +52,9 @@ export function Header() {
               <img
                 src="/images/logo-header.png"
                 alt="Logo Uniempresarial"
+                width="175"
+                height="48"
+                decoding="async"
                 className="h-7 w-auto max-w-[82px] object-contain transition-transform group-hover:scale-105 sm:h-10 sm:max-w-[175px]"
               />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
@@ -63,7 +66,7 @@ export function Header() {
 
           {/* Center: Title — always centered via grid */}
           <div className="flex flex-col items-center text-center min-w-0">
-            <span className="max-w-[10.5rem] truncate whitespace-nowrap text-[11px] font-black tracking-[-0.03em] text-slate-900 sm:max-w-none sm:text-xl lg:text-2xl">
+            <span className="max-w-[6.5rem] truncate whitespace-nowrap text-[10px] font-black tracking-[-0.03em] text-slate-900 sm:max-w-none sm:text-xl lg:text-2xl">
               ¿Dónde Está Stuttgart?
             </span>
             <span className="mt-0.5 hidden whitespace-nowrap text-[8px] font-black uppercase tracking-[0.18em] text-teal-700 sm:block sm:text-[9px]">

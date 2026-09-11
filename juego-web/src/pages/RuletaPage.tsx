@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
-import { RuletaWheel, DEFAULT_PRIZES } from '../components/RuletaWheel';
+import { RuletaWheel } from '../components/RuletaWheel';
+import { DEFAULT_PRIZES } from '../lib/constants';
 import { PrizeModal } from '../components/PrizeModal';
 import { RegistrationModal } from '../components/RegistrationModal';
 import { Spinner } from '../components/Spinner';
@@ -34,7 +35,9 @@ export function RuletaPage() {
   }, [isSpinning]);
 
   const handleSpinEnd = useCallback((prize: Prize) => {
-    console.log('[RuletaPage] handleSpinEnd received:', prize.label, 'id:', prize.id);
+    if (import.meta.env.DEV) {
+      console.debug('[RuletaPage] handleSpinEnd received:', prize.label, 'id:', prize.id);
+    }
     setIsSpinning(false);
     setPrizeWon(prize);
     setLastPrize(prize);
@@ -60,6 +63,7 @@ export function RuletaPage() {
           <img
             src={STUTTGART_IMAGES[stuttgartState]}
             alt="Stuttgart"
+            decoding="async"
             className="h-32 w-auto drop-shadow-[0_0_20px_rgba(239,18,24,0.22)] transition-transform duration-300 hover:scale-105 sm:h-44"
           />
           {stuttgartState === 'won' && (

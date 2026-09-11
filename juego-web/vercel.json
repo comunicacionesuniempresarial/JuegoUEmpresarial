@@ -1,4 +1,7 @@
 {
+  "build": {
+    "command": "npm run build"
+  },
   "rewrites": [
     { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ]

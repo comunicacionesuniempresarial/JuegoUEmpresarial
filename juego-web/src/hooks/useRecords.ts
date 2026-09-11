@@ -34,7 +34,7 @@ export function useRecords(): UseRecordsReturn {
 
     let query = supabase
       .from('records')
-      .select('*')
+      .select('id, nombre, telefono, correo, carrera, juego, resultado, consentimiento, consentimiento_timestamp, created_at, deleted_at')
       .order('created_at', { ascending: false });
 
     // Game filter

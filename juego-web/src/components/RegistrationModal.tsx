@@ -74,8 +74,13 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 backdrop-blur-md animate-fade-in p-4">
-      <div className="relative w-full max-w-md animate-scale-in">
-        <div className="rounded-3xl border border-white/60 bg-white p-6 sm:p-8 shadow-2xl relative">
+      <div className="relative max-h-[calc(100dvh-2rem)] w-full max-w-md animate-scale-in overflow-y-auto overscroll-contain">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="registration-modal-title"
+          className="relative rounded-3xl border border-white/60 bg-white p-6 shadow-2xl sm:p-8"
+        >
           {/* Close button */}
           <button
             onClick={handleClose}
@@ -93,12 +98,13 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
             <img
               src="/images/stuttgart-ganador.png"
               alt="Stuttgart celebrando tu victoria"
+              decoding="async"
               className="stuttgart-celebration relative z-10 h-28 w-auto object-contain drop-shadow-[0_12px_12px_rgba(74,53,28,0.25)]"
             />
             <span className="absolute right-[calc(50%-4.5rem)] top-0 z-20 animate-bounce text-2xl" aria-hidden="true">✨</span>
             <span className="absolute left-[calc(50%-5.5rem)] top-5 z-20 animate-pulse text-xl" aria-hidden="true">🎉</span>
           </div>
-          <h2 className="mb-1 text-center text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <h2 id="registration-modal-title" className="mb-1 text-center text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
             Registrar premio
           </h2>
           {resultado && (

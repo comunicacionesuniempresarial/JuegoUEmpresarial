@@ -32,7 +32,7 @@ export function DashboardPage() {
     setLoading(true);
     const { data, error } = await supabase
       .from('records')
-      .select('*')
+      .select('id, nombre, telefono, correo, carrera, juego, resultado, consentimiento, consentimiento_timestamp, created_at, deleted_at')
       .order('created_at', { ascending: false });
 
     if (!error && data) {
