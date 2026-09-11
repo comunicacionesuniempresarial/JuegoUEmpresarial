@@ -1,23 +1,33 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Global Theme & Typography
+   Global Theme & Typography — Uniempresarial Brand Colors
    ============================================================ */
 @theme {
-  --color-primary: #e85d4a;
-  --color-secondary: #167c80;
-  --color-accent: #f2b84b;
-  --color-primary-hover: #c94838;
-  --color-secondary-hover: #0f6266;
-  --color-accent-hover: #d99b32;
+  --color-primary: #EF1218;       /* Rojo UE - Principal */
+  --color-secondary: #003DA5;     /* Azul UE - Secundario */
+  --color-accent: #FF6B35;        /* Naranja UE - Acento/CTAs */
+  --color-primary-hover: #e40f2f;
+  --color-secondary-hover: #002A75;
+  --color-accent-hover: #e55a28;
+
+  --color-success: #26CE13;       /* Verde UE - Éxito */
+  --color-success-hover: #1fa810;
+
+  --color-navy: #0D1B3E;          /* Navy UE - Texto profundo */
+  --color-text: #1A2340;          /* Texto principal */
+  --color-text-soft: #4A5878;     /* Texto suave */
+  --color-bg: #F8FAFC;            /* Fondo neutro */
+  --color-bg-warm: #fffaf3;       /* Fondo cálido original */
+  --color-bg-alt: #F3F5F9;        /* Fondo alterno UE */
 
   --font-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Poppins', sans-serif;
 }
 
 :root {
-  color: #24303b;
-  background: #f7f3ed;
+  color: #1A2340;
+  background: #F8FAFC;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -25,7 +35,23 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #f7f3ed;
+  background: #F8FAFC;
+  overflow-x: hidden;
+}
+
+/* Mobile browser chrome changes the visual viewport. Use the safe-area inset
+   on standalone/PWA devices without changing the desktop kiosk composition. */
+@supports (padding: max(0px)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 639px) {
+  button,
+  a {
+    touch-action: manipulation;
+  }
 }
 
 button,
@@ -41,7 +67,7 @@ a {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(13, 27, 62, 0.1);
 }
 
 .glass-card {
@@ -51,19 +77,8 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 1.5rem;
   box-shadow:
-    0 10px 40px -5px rgba(0, 0, 0, 0.2),
+    0 10px 40px -5px rgba(13, 27, 62, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-
-/* ============================================================
-   Landing Page — Split-Screen Hero
-   ============================================================ */
-.landing-hero {
-  min-height: calc(100vh - 4rem);
-}
-
-.landing-panel {
-  position: relative;
 }
 
 /* ============================================================
@@ -78,7 +93,7 @@ a {
   position: absolute;
   inset: -4px;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #FFE66D, #FF6B6B, #FFE66D);
+  background: linear-gradient(135deg, #FF6B35, #EF1218, #FF6B35);
   z-index: -1;
   opacity: 0;
   filter: blur(12px);
@@ -126,12 +141,8 @@ a {
 }
 
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes scale-in {
@@ -146,43 +157,27 @@ a {
 }
 
 @keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-  70% {
-    transform: scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.08); }
+  70% { transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes confetti-fall {
-  0% {
-    transform: translateY(-20px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(60px) rotate(360deg);
-    opacity: 0;
-  }
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(60px) rotate(360deg); opacity: 0; }
 }
 
 @keyframes roulette-pointer-flap {
-  0%, 100% {
-    transform: rotate(0deg) translateY(0);
-  }
-  48% {
-    transform: rotate(-13deg) translateY(-2px);
-  }
-  64% {
-    transform: rotate(4deg) translateY(1px);
-  }
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  48% { transform: rotate(-13deg) translateY(-2px); }
+  64% { transform: rotate(4deg) translateY(1px); }
+}
+
+@keyframes stuttgart-celebration {
+  0%, 100% { transform: translateY(0) rotate(-2deg) scale(1); }
+  35% { transform: translateY(-8px) rotate(2deg) scale(1.04); }
+  68% { transform: translateY(-3px) rotate(-1deg) scale(1.02); }
 }
 
 /* ============================================================
@@ -203,11 +198,15 @@ a {
 /* The pointer flaps against the wheel rim while it spins, like a physical prize wheel. */
 .roulette-pointer {
   transform-origin: 19px 5px;
-  filter: drop-shadow(0 4px 3px rgba(132, 53, 14, 0.2));
+  filter: drop-shadow(0 4px 3px rgba(239, 18, 24, 0.2));
 }
 
 .roulette-pointer--tick {
   animation: roulette-pointer-flap 0.14s linear both;
+}
+
+.stuttgart-celebration {
+  animation: stuttgart-celebration 1.8s ease-in-out infinite;
 }
 
 /* ============================================================
@@ -221,21 +220,21 @@ a {
   pointer-events: none;
   animation: confetti-fall 1.2s ease-in forwards;
 }
-.confetti-particle:nth-child(1) { background: #FF6B6B; top: 10%; left: 20%; animation-delay: 0s; animation-duration: 1s; }
-.confetti-particle:nth-child(2) { background: #FFE66D; top: 10%; left: 50%; animation-delay: 0.1s; width: 6px; height: 10px; }
-.confetti-particle:nth-child(3) { background: #4ECDC4; top: 10%; left: 75%; animation-delay: 0.2s; border-radius: 50%; }
-.confetti-particle:nth-child(4) { background: #FF6B6B; top: 10%; left: 35%; animation-delay: 0.15s; width: 10px; height: 6px; }
-.confetti-particle:nth-child(5) { background: #FFE66D; top: 10%; left: 60%; animation-delay: 0.05s; border-radius: 50%; width: 6px; height: 6px; }
-.confetti-particle:nth-child(6) { background: #4ECDC4; top: 10%; left: 85%; animation-delay: 0.25s; width: 7px; height: 9px; }
+.confetti-particle:nth-child(1) { background: #EF1218; top: 10%; left: 20%; animation-delay: 0s; animation-duration: 1s; }
+.confetti-particle:nth-child(2) { background: #FF6B35; top: 10%; left: 50%; animation-delay: 0.1s; width: 6px; height: 10px; }
+.confetti-particle:nth-child(3) { background: #003DA5; top: 10%; left: 75%; animation-delay: 0.2s; border-radius: 50%; }
+.confetti-particle:nth-child(4) { background: #EF1218; top: 10%; left: 35%; animation-delay: 0.15s; width: 10px; height: 6px; }
+.confetti-particle:nth-child(5) { background: #FF6B35; top: 10%; left: 60%; animation-delay: 0.05s; border-radius: 50%; width: 6px; height: 6px; }
+.confetti-particle:nth-child(6) { background: #003DA5; top: 10%; left: 85%; animation-delay: 0.25s; width: 7px; height: 9px; }
 
 /* ============================================================
    Spinning wheel glow
    ============================================================ */
 .spinning-glow {
   box-shadow:
-    0 0 0 4px rgba(255, 107, 107, 0.3),
-    0 0 30px rgba(255, 107, 107, 0.4),
-    0 0 60px rgba(255, 230, 109, 0.2);
+    0 0 0 4px rgba(239, 18, 24, 0.3),
+    0 0 30px rgba(239, 18, 24, 0.4),
+    0 0 60px rgba(255, 107, 53, 0.2);
   animation: glow-pulse 0.8s ease-in-out infinite;
 }
 
@@ -247,7 +246,7 @@ a {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 230, 109, 0.9) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.9) 0%, transparent 70%);
   pointer-events: none;
   z-index: 2;
 }
@@ -279,7 +278,7 @@ a {
   right: 15%;
   width: 9px;
   height: 9px;
-  background: radial-gradient(circle, rgba(78, 205, 196, 0.9) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 61, 165, 0.9) 0%, transparent 70%);
   animation: sparkle-twinkle 3.2s ease-in-out infinite 0.3s;
 }
 
@@ -309,7 +308,8 @@ a {
   .sparkle,
   .confetti-particle,
   .btn-glow::before,
-  .roulette-pointer--tick {
+  .roulette-pointer--tick,
+  .stuttgart-celebration {
     animation: none !important;
   }
 }

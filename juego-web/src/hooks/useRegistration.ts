@@ -25,6 +25,8 @@ export function useRegistration(): UseRegistrationReturn {
     const { error: insertError } = await supabase.from('records').insert({
       nombre: data.nombre,
       telefono: data.telefono,
+      correo: data.correo ?? null,
+      carrera: data.carrera ?? null,
       juego: data.juego,
       resultado: data.resultado ?? null,
     });

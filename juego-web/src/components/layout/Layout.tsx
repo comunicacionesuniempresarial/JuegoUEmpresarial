@@ -6,16 +6,16 @@ import { OfflineBanner } from './OfflineBanner';
 
 export function Layout() {
   const location = useLocation();
-  // Kiosk mode viewports for games and landing page (zero scroll, 100vh locked)
+  // Desktop kiosk mode; mobile keeps natural scrolling so browser chrome never hides controls.
   const isKioskGamePage = location.pathname === '/' || location.pathname === '/ruleta' || location.pathname === '/busqueda';
 
   return (
-    <div className={`flex flex-col bg-slate-50/50 selection:bg-primary selection:text-white ${
-      isKioskGamePage ? 'h-screen max-h-screen overflow-hidden' : 'min-h-screen'
+    <div className={`flex min-h-[100svh] flex-col bg-slate-50/50 selection:bg-primary selection:text-white ${
+      isKioskGamePage ? 'lg:h-screen lg:max-h-screen lg:overflow-hidden' : ''
     }`}>
       <Header />
       <main className={`flex-1 flex flex-col ${
-        isKioskGamePage ? 'overflow-hidden' : 'pb-16 md:pb-0'
+        isKioskGamePage ? 'min-h-0 lg:overflow-hidden' : 'pb-16 md:pb-0'
       }`}>
         <Outlet />
       </main>

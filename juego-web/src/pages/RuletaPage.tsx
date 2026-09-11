@@ -34,6 +34,7 @@ export function RuletaPage() {
   }, [isSpinning]);
 
   const handleSpinEnd = useCallback((prize: Prize) => {
+    console.log('[RuletaPage] handleSpinEnd received:', prize.label, 'id:', prize.id);
     setIsSpinning(false);
     setPrizeWon(prize);
     setLastPrize(prize);
@@ -51,26 +52,23 @@ export function RuletaPage() {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden bg-[radial-gradient(circle_at_15%_20%,#fff1ca_0,transparent_26%),radial-gradient(circle_at_85%_75%,#dff8f5_0,transparent_30%),linear-gradient(135deg,#fffaf2_0%,#fff5e7_45%,#effbfa_100%)] p-4 sm:flex-row sm:gap-8 sm:p-8 lg:gap-14">
+    <div className="relative flex min-h-full flex-col items-center justify-start gap-5 overflow-y-auto bg-[radial-gradient(circle_at_15%_20%,#ffe0e0_0,transparent_26%),radial-gradient(circle_at_85%_75%,#e0f0fa_0,transparent_30%),linear-gradient(135deg,#F8FAFC_0%,#fff5e7_45%,#effbfa_100%)] p-3 pb-8 sm:justify-center sm:p-6 lg:flex-row lg:gap-14 lg:overflow-hidden lg:p-8">
 
       {/* ── Left: Stuttgart ── */}
-      <div className="flex w-full max-w-[250px] flex-col items-center text-center sm:w-56 sm:max-w-none">
+      <div className="flex w-full max-w-[18rem] flex-col items-center text-center sm:w-60 sm:max-w-none">
         <div className="relative mb-3">
           <img
             src={STUTTGART_IMAGES[stuttgartState]}
             alt="Stuttgart"
-            className="h-32 w-auto drop-shadow-[0_0_20px_rgba(232,93,74,0.22)] transition-transform duration-300 hover:scale-105 sm:h-44"
+            className="h-32 w-auto drop-shadow-[0_0_20px_rgba(239,18,24,0.22)] transition-transform duration-300 hover:scale-105 sm:h-44"
           />
           {stuttgartState === 'won' && (
             <span className="absolute -top-2 -right-2 text-3xl animate-bounce-in">🎉</span>
           )}
         </div>
-        <p className="text-base sm:text-lg font-bold text-slate-800">
+        <p aria-live="polite" className="text-base sm:text-lg font-bold text-slate-800">
           {STUTTGART_MESSAGES[stuttgartState]}
         </p>
-        {stuttgartState === 'idle' && (
-          <p className="mt-1 max-w-[220px] text-sm text-slate-500">Atrévete a girar: un premio te está esperando.</p>
-        )}
 
         <button
           onClick={handleSpin}
@@ -78,7 +76,7 @@ export function RuletaPage() {
           className={`mt-5 min-h-16 w-full touch-manipulation rounded-2xl px-8 py-4 text-xl font-black uppercase tracking-wider text-white shadow-xl transition-all duration-200 sm:text-2xl ${
             isSpinning
               ? 'cursor-not-allowed bg-slate-300 opacity-70'
-              : 'bg-gradient-to-r from-[#ff5a36] via-[#ff7834] to-[#ffb000] hover:brightness-105 hover:scale-105 active:scale-95 hover:shadow-[0_0_34px_rgba(255,112,42,0.52)]'
+              : 'bg-gradient-to-r from-primary via-accent to-primary hover:brightness-105 hover:scale-105 active:scale-95 hover:shadow-primary/40'
           }`}
         >
           {isSpinning ? (
@@ -92,7 +90,10 @@ export function RuletaPage() {
       </div>
 
       {/* ── Right: large roulette ── */}
-      <div className="flex items-center justify-center">
+      <div className="relative flex items-center justify-center">
+        <div className="pointer-events-none absolute -bottom-1 rounded-full bg-slate-900/80 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-lg backdrop-blur">
+          La punta define el premio
+        </div>
         <RuletaWheel
           prizes={DEFAULT_PRIZES}
           isSpinning={isSpinning}

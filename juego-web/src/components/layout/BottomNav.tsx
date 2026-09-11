@@ -10,7 +10,7 @@ export function BottomNav() {
     `flex flex-col items-center justify-center py-2 px-3 transition-all duration-200 rounded-2xl relative ${
       isActive
         ? 'text-primary font-bold scale-105'
-        : 'text-gray-500 hover:text-gray-900 font-medium'
+        : 'text-gray-500 hover:text-primary hover:bg-primary/5 font-medium'
     }`;
 
   return (

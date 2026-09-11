@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { registrationSchema } from '../lib/validations';
+import { registrationSchema, type CarreraPregrado } from '../lib/validations';
 import { useRegistration } from './useRegistration';
 
-type FieldKey = 'nombre' | 'telefono' | 'consent';
+type FieldKey = 'nombre' | 'telefono' | 'correo' | 'carrera' | 'consent';
 
 interface UseRegistrationFormOptions {
   /** Which game triggered this registration */
@@ -17,7 +17,7 @@ interface UseRegistrationFormOptions {
  * Shared registration form state + submit logic used by both
  * BusquedaPage (inline form) and RegistrationModal.
  *
- * Manages nombre, telefono, consent, fieldErrors, showToast,
+ * Manages nombre, telefono, correo, carrera, consent, fieldErrors, showToast,
  * and handles Zod validation + Supabase insert.
  */
 export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistrationFormOptions) {
@@ -25,14 +25,17 @@ export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistra
 
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [carrera, setCarrera] = useState<CarreraPregrado | ''>('');
   const [consent, setConsent] = useState(false);
+  const [showCarreras, setShowCarreras] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [showToast, setShowToast] = useState(false);
 
   /** Validate a single field against the full schema */
   const validateField = useCallback(
     (field: FieldKey, value: unknown) => {
-      const partial = { nombre, telefono, consent, juego, resultado, [field]: value };
+      const partial = { nombre, telefono, correo, carrera, consent, juego, resultado, [field]: value };
       const result = registrationSchema.safeParse(partial);
       if (!result.success) {
         const issue = result.error.issues.find((i) => i.path.includes(field));
@@ -41,7 +44,7 @@ export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistra
         setFieldErrors((prev) => ({ ...prev, [field]: '' }));
       }
     },
-    [nombre, telefono, consent, juego, resultado],
+    [nombre, telefono, correo, carrera, consent, juego, resultado],
   );
 
   const handleSubmit = useCallback(
@@ -52,6 +55,8 @@ export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistra
       const result = registrationSchema.safeParse({
         nombre,
         telefono,
+        correo: correo || undefined,
+        carrera: carrera || undefined,
         consent,
         juego,
         resultado,
@@ -76,13 +81,16 @@ export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistra
         }, 2000);
       }
     },
-    [nombre, telefono, consent, juego, resultado, submit, onSuccess],
+    [nombre, telefono, correo, carrera, consent, juego, resultado, submit, onSuccess],
   );
 
   const resetForm = useCallback(() => {
     setNombre('');
     setTelefono('');
+    setCorreo('');
+    setCarrera('');
     setConsent(false);
+    setShowCarreras(false);
     setFieldErrors({});
   }, []);
 
@@ -91,6 +99,12 @@ export function useRegistrationForm({ juego, resultado, onSuccess }: UseRegistra
     setNombre,
     telefono,
     setTelefono,
+    correo,
+    setCorreo,
+    carrera,
+    setCarrera,
+    showCarreras,
+    setShowCarreras,
     consent,
     setConsent,
     fieldErrors,

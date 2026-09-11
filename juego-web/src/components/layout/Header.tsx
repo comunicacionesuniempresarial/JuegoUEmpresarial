@@ -33,42 +33,47 @@ export function Header() {
     `relative text-xs sm:text-sm font-bold transition-all px-3 py-1.5 rounded-xl ${
       isActive
         ? 'text-primary bg-primary/10 shadow-xs'
-        : 'text-gray-600 hover:text-primary hover:bg-gray-100/60'
+        : 'text-gray-600 hover:text-primary hover:bg-primary/5'
     }`;
 
   return (
-    <header className="glass-panel sticky top-0 z-50 border-b border-[#eadfd2] bg-[#fffdf9]/95 backdrop-blur-md h-16 shrink-0 transition-all">
-      <div className="mx-auto h-full max-w-7xl px-3 sm:px-6 lg:px-8">
-        <div className="flex h-full items-center justify-between">
+    <header className="glass-panel sticky top-0 z-50 h-[4.25rem] shrink-0 border-b border-[#eadfd2] bg-[#fffdf9]/95 backdrop-blur-md transition-all sm:h-16">
+      <div className="mx-auto h-full max-w-7xl px-2.5 sm:px-6 lg:px-8">
+        {/* 3-column grid: logo | center title | nav — title is always centered */}
+        <div className="grid h-full grid-cols-[auto_1fr_auto] items-center">
+          {/* Left: Logo */}
           <NavLink
             to="/"
             onClick={() => sound.playClick()}
-            className="flex items-center gap-2.5 group transition-transform active:scale-95"
+            aria-label="Ir al inicio de Uniempresarial"
+            className="group shrink-0 transition-transform active:scale-95"
           >
             <div className="relative">
               <img
                 src="/images/logo-header.png"
                 alt="Logo Uniempresarial"
-                className="h-8 sm:h-9 w-auto transition-transform group-hover:scale-105 drop-shadow-xs"
+                className="h-7 w-auto max-w-[82px] object-contain transition-transform group-hover:scale-105 sm:h-10 sm:max-w-[175px]"
               />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-black text-slate-800 tracking-tight leading-none">
-                ¿Dónde Está Stuttgart?
-              </span>
-              <span className="text-[9px] font-bold text-gray-400 tracking-wider uppercase leading-none mt-0.5">
-                Juego para estudiantes
-              </span>
-            </div>
           </NavLink>
 
-          {/* Navigation & Kiosk Controls */}
-          <nav className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden md:flex items-center gap-2">
+          {/* Center: Title — always centered via grid */}
+          <div className="flex flex-col items-center text-center min-w-0">
+            <span className="max-w-[10.5rem] truncate whitespace-nowrap text-[11px] font-black tracking-[-0.03em] text-slate-900 sm:max-w-none sm:text-xl lg:text-2xl">
+              ¿Dónde Está Stuttgart?
+            </span>
+            <span className="mt-0.5 hidden whitespace-nowrap text-[8px] font-black uppercase tracking-[0.18em] text-teal-700 sm:block sm:text-[9px]">
+              Juego para estudiantes
+            </span>
+          </div>
+
+          {/* Right: Nav & Controls */}
+          <nav className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="hidden items-center gap-1 xl:flex">
               <NavLink to="/" end className={linkClass} onClick={() => sound.playClick()}>
                 Inicio
               </NavLink>
@@ -78,20 +83,22 @@ export function Header() {
               <NavLink to="/busqueda" className={linkClass} onClick={() => sound.playClick()}>
                 Búsqueda
               </NavLink>
-              <NavLink
+            </div>
+
+            <NavLink
                 to="/admin"
                 onClick={() => sound.playClick()}
                 className={({ isActive }) =>
-                  `text-xs sm:text-sm font-bold transition-all px-3 py-1.5 rounded-full border shadow-xs ${
+                  `inline-flex items-center rounded-xl border px-2 py-1.5 text-[11px] font-black transition-all sm:px-3 sm:text-xs ${
                     isActive
-                      ? 'bg-primary text-white border-primary shadow-primary/30'
-                      : 'border-gray-200 text-gray-700 bg-white hover:border-primary hover:text-primary'
+                      ? 'border-primary bg-primary text-white shadow-primary/30'
+                      : 'border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50'
                   }`
                 }
               >
-                Admin
-              </NavLink>
-            </div>
+                <span className="sm:mr-1" aria-hidden="true">⚙</span>
+                <span className="hidden sm:inline">Admin</span>
+            </NavLink>
 
             {/* Kiosk Fullscreen Mode Button */}
             <button

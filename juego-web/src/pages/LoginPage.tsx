@@ -36,7 +36,7 @@ export function LoginPage() {
     <div
       className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,107,107,0.06) 0%, rgba(78,205,196,0.06) 100%)',
+        background: 'linear-gradient(135deg, rgba(239,18,24,0.06) 0%, rgba(0,61,165,0.06) 100%)',
       }}
     >
       <div className="w-full max-w-md animate-scale-in">

@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Prize } from '../types';
+import { sound } from '../lib/sound';
 
 export const DEFAULT_PRIZES: Prize[] = [
-  { id: '1', label: 'Agenda', color: '#3573FF', probability: 1 },
-  { id: '2', label: 'Termo', color: '#20C8BE', probability: 1 },
-  { id: '3', label: 'Sombrilla', color: '#FFB000', probability: 1 },
-  { id: '4', label: 'Chaqueta cortavientos', color: '#F03E80', probability: 1 },
-  { id: '5', label: 'Kit uniempresarial', color: '#5AC85A', probability: 1 },
-  { id: '6', label: 'Media beca Virtual', color: '#8E50FF', probability: 1 },
-  { id: '7', label: 'Beca Presencial', color: '#FF5A36', probability: 1 },
+  { id: '1', label: 'Agenda', color: '#EF1218', probability: 3 },
+  { id: '2', label: 'Termo', color: '#003DA5', probability: 3 },
+  { id: '3', label: 'Sombrilla', color: '#FF6B35', probability: 2.5 },
+  { id: '4', label: 'Chaqueta cortavientos', color: '#1A57C8', probability: 2 },
+  { id: '5', label: 'Kit uniempresarial', color: '#26CE13', probability: 1.5 },
+  { id: '6', label: 'Media beca Virtual', color: '#002A75', probability: 0.8 },
+  { id: '7', label: 'Beca Presencial', color: '#e40f2f', probability: 0.5 },
 ];
 
 interface RuletaWheelProps {
@@ -71,9 +72,21 @@ function randomInt(max: number): number {
   return Math.floor((values[0] / (0xffffffff + 1)) * max);
 }
 
+/** Weighted random selection: picks an index based on each prize's probability weight. */
+function weightedRandomIndex(weights: number[]): number {
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return weights.length - 1;
+}
+
 export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps) {
   const rotationRef = useRef(0);
   const animationFrameRef = useRef<number | null>(null);
+  const lastTickTimeRef = useRef(0);
   const [rotation, setRotation] = useState(0);
   const [pointerTick, setPointerTick] = useState(0);
 
@@ -88,7 +101,8 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
     const n = prizes.length;
     const segDeg = 360 / n;
     const extra = (8 + randomInt(5)) * 360;
-    const target = randomInt(n);
+    const weights = prizes.map((p) => p.probability);
+    const target = weightedRandomIndex(weights);
 
     // To land segment `target` under the pointer (top), rotate by (n - target) segments.
     const startRotation = rotationRef.current;
@@ -108,6 +122,11 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
       if (currentPeg !== lastPeg) {
         lastPeg = currentPeg;
         setPointerTick((value) => value + 1);
+        const minimumTickInterval = progress < 0.55 ? 80 : progress < 0.82 ? 115 : 170;
+        if (timestamp - lastTickTimeRef.current >= minimumTickInterval) {
+          lastTickTimeRef.current = timestamp;
+          sound.playTick(progress < 0.7 ? 0.82 : 1.08);
+        }
       }
 
       if (!slowedDown && progress >= 0.7) {
@@ -124,6 +143,16 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
 
       rotationRef.current = total;
       navigator.vibrate?.(16);
+      const finalPeg = Math.floor(currentRotation / segDeg);
+      console.log('[RuletaWheel] SPIN RESULT:', {
+        target,
+        targetPrize: prizes[target].label,
+        finalRotation: currentRotation,
+        finalPeg,
+        pegModN: ((finalPeg % n) + n) % n,
+        segDeg,
+        totalRotation: total,
+      });
       onSpinEnd(prizes[target]);
     };
 
@@ -148,7 +177,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
         style={{
           width: 'calc(100% + 24px)',
           height: 'calc(100% + 24px)',
-          background: 'conic-gradient(from 90deg, rgba(53,115,255,0.24), rgba(32,200,190,0.22), rgba(255,176,0,0.25), rgba(240,62,128,0.22), rgba(142,80,255,0.22), rgba(255,90,54,0.25), rgba(53,115,255,0.24))',
+          background: 'conic-gradient(from 90deg, rgba(239,18,24,0.24), rgba(0,61,165,0.22), rgba(255,107,53,0.25), rgba(26,87,200,0.22), rgba(38,206,19,0.22), rgba(228,15,47,0.25), rgba(239,18,24,0.24))',
           filter: 'blur(28px)',
         }}
       />
@@ -156,7 +185,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
       {/* ── Wheel ── */}
       <svg
         viewBox={`0 0 ${VB} ${VB}`}
-        className="relative z-10 h-[min(82vw,560px)] w-[min(82vw,560px)] drop-shadow-[0_22px_34px_rgba(15,39,71,0.28)] sm:h-[min(62vw,610px)] sm:w-[min(62vw,610px)] lg:h-[min(84vh,680px)] lg:w-[min(84vh,680px)]"
+        className="relative z-10 h-[clamp(17rem,82vw,30rem)] w-[clamp(17rem,82vw,30rem)] drop-shadow-[0_22px_34px_rgba(15,39,71,0.28)] sm:h-[min(62vw,610px)] sm:w-[min(62vw,610px)] lg:h-[min(84vh,680px)] lg:w-[min(84vh,680px)]"
         style={{
           transform: `rotate(${rotation}deg)`,
           transition: 'none',
@@ -175,14 +204,14 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
         </defs>
 
         {/* Outer decorative rings */}
-        <circle cx={CX} cy={CY} r={OUTER_R + 16} fill="#fffaf1" stroke="#ff8f2b" strokeWidth="7" />
-        <circle cx={CX} cy={CY} r={OUTER_R + 9} fill="none" stroke="#ffd166" strokeWidth="3" opacity={0.95} />
+        <circle cx={CX} cy={CY} r={OUTER_R + 16} fill="#fffaf1" stroke="#FF6B35" strokeWidth="7" />
+        <circle cx={CX} cy={CY} r={OUTER_R + 9} fill="none" stroke="#FF6B35" strokeWidth="3" opacity={0.95} />
         <circle cx={CX} cy={CY} r={OUTER_R + 3} fill="none" stroke="#ffffff" strokeWidth="2" opacity={0.9} />
 
         {/* Physical wheel pegs: the flapper catches each boundary as it turns. */}
         {prizes.map((prize, index) => {
           const peg = pegPosition(index, prizes.length, CX, CY, OUTER_R + 8);
-          return <circle key={`peg-${prize.id}`} cx={peg.x} cy={peg.y} r="5.5" fill="#fff8e8" stroke="#ff8f2b" strokeWidth="2" />;
+          return <circle key={`peg-${prize.id}`} cx={peg.x} cy={peg.y} r="5.5" fill="#fff8e8" stroke="#FF6B35" strokeWidth="2" />;
         })}
 
         {/* Segments */}
@@ -223,7 +252,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
       </svg>
 
       {/* ── Center hub ── */}
-      <div className="absolute z-20 flex h-[78px] w-[78px] items-center justify-center overflow-hidden rounded-full border-[6px] border-[#fff7df] bg-[#ff7a2f] shadow-[0_0_0_5px_#ffbc42,0_0_30px_rgba(255,90,54,0.48)] sm:h-[104px] sm:w-[104px]">
+      <div className="absolute z-20 flex h-[78px] w-[78px] items-center justify-center overflow-hidden rounded-full border-[6px] border-[#fff7df] bg-[#EF1218] shadow-[0_0_0_5px_#FF6B35,0_0_30px_rgba(239,18,24,0.48)] sm:h-[104px] sm:w-[104px]">
         <img
           src="/images/stuttgart-ruleta.png"
           alt="Stuttgart"
@@ -241,8 +270,8 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
           viewBox="0 0 38 46"
           aria-hidden="true"
         >
-          <circle cx="19" cy="5" r="4" fill="#fff8e8" stroke="#ff5a36" strokeWidth="2" />
-          <polygon points="19,45 2,7 36,7" fill="#ff5a36" stroke="#fff8e8" strokeWidth="3" strokeLinejoin="round" />
+          <circle cx="19" cy="5" r="4" fill="#fff8e8" stroke="#EF1218" strokeWidth="2" />
+          <polygon points="19,45 2,7 36,7" fill="#EF1218" stroke="#fff8e8" strokeWidth="3" strokeLinejoin="round" />
         </svg>
       </div>
     </div>
