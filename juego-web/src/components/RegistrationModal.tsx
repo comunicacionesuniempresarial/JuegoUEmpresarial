@@ -20,9 +20,11 @@ interface RegistrationModalProps {
   resultado?: string;
   /** Called after successful registration OR on close */
   onClose: () => void;
+  /** Called after a successful registration, before the modal is closed. */
+  onSuccess?: () => void;
 }
 
-export function RegistrationModal({ juego, resultado, onClose }: RegistrationModalProps) {
+export function RegistrationModal({ juego, resultado, onClose, onSuccess }: RegistrationModalProps) {
   const {
     nombre,
     setNombre,
@@ -47,7 +49,10 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
     resultado,
     onSuccess: () => {
       sound.playVictory();
-      setTimeout(onClose, 1200);
+      setTimeout(() => {
+        onClose();
+        onSuccess?.();
+      }, 1200);
     },
   });
 
@@ -57,7 +62,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
   };
 
   const isNameValid = nombre.trim().length >= 2 && !fieldErrors.nombre;
-  const isPhoneValid = /^\+?57[0-9]{10}$|^3[0-9]{9}$/.test(telefono.trim()) && !fieldErrors.telefono;
+  const isPhoneValid = /^(?:3[0-9]{9}|\+573[0-9]{9})$/.test(telefono.trim()) && !fieldErrors.telefono;
   const isEmailValid = correo === '' || (correo.includes('@') && !fieldErrors.correo);
 
   const toggleCarreras = () => {

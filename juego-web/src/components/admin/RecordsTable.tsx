@@ -200,6 +200,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
 
     if (!error) {
       await supabase.from('audit_log').insert({
+        user_id: admin?.id,
         action: 'soft_delete',
         table_name: 'records',
         record_id: record.id,
@@ -218,6 +219,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
 
     if (!error) {
       await supabase.from('audit_log').insert({
+        user_id: admin?.id,
         action: 'hard_delete',
         table_name: 'records',
         record_id: record.id,
@@ -244,6 +246,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
 
     if (!error) {
       await supabase.from('audit_log').insert({
+        user_id: admin?.id,
         action: 'update',
         table_name: 'records',
         record_id: id,

@@ -19,6 +19,7 @@ export function DashboardPage() {
   const [records, setRecords] = useState<Registration[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, ruleta: 0, busqueda: 0, today: 0 });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'records' | 'audit'>('records');
   const [dailyStats, setDailyStats] = useState<DailyStat[]>([]);
 
@@ -30,12 +31,15 @@ export function DashboardPage() {
 
   const fetchRecords = useCallback(async () => {
     setLoading(true);
+    setError(null);
     const { data, error } = await supabase
       .from('records')
       .select('id, nombre, telefono, correo, carrera, juego, resultado, consentimiento, consentimiento_timestamp, created_at, deleted_at')
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
+    if (error) {
+      setError(error.message);
+    } else if (data) {
       const typed = data as Registration[];
       setRecords(typed);
 
@@ -132,6 +136,12 @@ export function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {error && (
+        <div role="alert" className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+          No se pudieron cargar los registros: {error}
+        </div>
+      )}
 
       {/* Stats Cards Grid */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">

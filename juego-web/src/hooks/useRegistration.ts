@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import type { RegistrationInput } from '../lib/validations';
+import { normalizePhone, type RegistrationInput } from '../lib/validations';
 
 export interface UseRegistrationReturn {
   submit: (data: RegistrationInput) => Promise<boolean>;
@@ -24,11 +24,13 @@ export function useRegistration(): UseRegistrationReturn {
 
     const { error: insertError } = await supabase.from('records').insert({
       nombre: data.nombre,
-      telefono: data.telefono,
+      telefono: normalizePhone(data.telefono),
       correo: data.correo ?? null,
       carrera: data.carrera ?? null,
       juego: data.juego,
       resultado: data.resultado ?? null,
+      consentimiento: data.consent,
+      consentimiento_timestamp: new Date().toISOString(),
     });
 
     setIsSubmitting(false);

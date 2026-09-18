@@ -29,42 +29,26 @@ function getRandomIndex(excluding: number | null = null): number {
 
 export function BusquedaPage() {
   const timer = useElapsedTimer();
+  const { elapsedMs, formatted, reset, start, stop } = timer;
   const [currentImageIndex, setCurrentImageIndex] = useState(() => getRandomIndex());
   const [hasFound, setHasFound] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(3);
   const [clickEffect, setClickEffect] = useState<{ x: number; y: number } | null>(null);
   const clickEffectRef = useRef<number | null>(null);
-  const countdownTimerRef = useRef<number | null>(null);
 
-  const beginCountdown = useCallback(() => {
-    if (countdownTimerRef.current) window.clearInterval(countdownTimerRef.current);
-    timer.reset();
-    setCountdown(3);
-    let value = 3;
-    countdownTimerRef.current = window.setInterval(() => {
-      value -= 1;
-      if (value > 0) {
-        setCountdown(value);
-        sound.playClick();
-      } else {
-        if (countdownTimerRef.current) window.clearInterval(countdownTimerRef.current);
-        setCountdown(null);
-        timer.start();
-        sound.playFind();
-      }
-    }, 900);
-    // Timer methods are intentionally captured once for challenge resets.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const beginChallenge = useCallback(() => {
+    reset();
+    start();
+    sound.playFind();
+  // Timer controls are intentionally captured once so interval updates do not
+  // restart the challenge through the initialization effect.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    beginCountdown();
-    return () => {
-      if (countdownTimerRef.current) window.clearInterval(countdownTimerRef.current);
-    };
-  }, [beginCountdown]);
+    beginChallenge();
+  }, [beginChallenge]);
 
   // Cleanup clickEffect timeout on unmount
   useEffect(() => {
@@ -73,18 +57,15 @@ export function BusquedaPage() {
     };
   }, []);
 
-  const currentImage = CAREER_IMAGES[currentImageIndex];
-  const companionImage = countdown !== null
-    ? '/images/stuttgart-sonriente.webp'
-    : hasFound
-      ? '/images/stuttgart-ganador.webp'
-      : '/images/stuttgart-investigador.webp';
-  const elapsedSeconds = Math.floor(timer.elapsedMs / 1000);
+  const companionImage = hasFound
+    ? '/images/stuttgart-ganador.webp'
+    : '/images/stuttgart-investigador.webp';
+  const elapsedSeconds = Math.floor(elapsedMs / 1000);
   const urgency = elapsedSeconds >= 20 ? 'intense' : elapsedSeconds >= 10 ? 'warning' : 'calm';
 
   const handleFound = () => {
     if (hasFound) return;
-    timer.stop();
+    stop();
     sound.playVictory();
     setHasFound(true);
   };
@@ -94,10 +75,10 @@ export function BusquedaPage() {
     setHasFound(false);
     setIsZoomed(false);
     setCurrentImageIndex(getRandomIndex(currentImageIndex));
-    beginCountdown();
+    beginChallenge();
   };
 
-  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleImageClick = (e: React.MouseEvent<HTMLButtonElement>, imageIndex: number) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -105,6 +86,9 @@ export function BusquedaPage() {
     sound.playClick();
     if (clickEffectRef.current) clearTimeout(clickEffectRef.current);
     clickEffectRef.current = window.setTimeout(() => setClickEffect(null), 600);
+    if (imageIndex === currentImageIndex) {
+      handleFound();
+    }
   };
 
   const handleShowRegistration = () => {
@@ -114,6 +98,9 @@ export function BusquedaPage() {
 
   const handleCloseRegistration = () => {
     setShowRegistration(false);
+  };
+
+  const handleRegistrationSuccess = () => {
     handleNextChallenge();
   };
 
@@ -134,17 +121,14 @@ export function BusquedaPage() {
       <div className="flex min-h-[calc(100svh-13rem)] w-full flex-1 flex-col gap-3 sm:min-h-0">
         {/* Visual Challenge Canvas */}
         <div
-          onClick={handleImageClick}
-          className={`relative flex min-h-[48vh] overflow-auto rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:min-h-0 sm:rounded-[2rem] ${
-            isZoomed ? 'items-start justify-start' : 'items-center justify-center'
-          } ${
+          className={`relative min-h-[48vh] overflow-auto rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:min-h-0 sm:rounded-[2rem] ${
             urgency === 'intense'
               ? 'border-primary/50 shadow-[0_0_0_4px_rgba(239,18,24,0.12),0_20px_54px_rgba(239,18,24,0.16)]'
               : urgency === 'warning'
                 ? 'border-accent/50 shadow-[0_0_0_4px_rgba(255,107,53,0.1),0_20px_54px_rgba(255,107,53,0.14)]'
                 : 'border-white/80 bg-white/80'
           } ${
-            isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'
+            isZoomed ? 'cursor-zoom-out' : 'cursor-crosshair'
           }`}
         >
           {/* Subtle grid pattern background */}
@@ -152,14 +136,6 @@ export function BusquedaPage() {
           <div className="pointer-events-none absolute left-5 top-5 z-10 rounded-full border border-white/70 bg-slate-900/80 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-lg backdrop-blur">
             {isZoomed ? 'Lupa activa' : urgency === 'intense' ? '¡No te rindas!' : urgency === 'warning' ? '¡Sigue buscando!' : 'Encuentra a Stuttgart'}
           </div>
-
-          {countdown !== null && (
-            <div role="status" aria-live="assertive" className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-sm">
-              <span className="text-sm font-black uppercase tracking-[0.24em] text-white/80">Prepárate</span>
-              <span key={countdown} className="mt-2 animate-scale-in text-8xl font-black leading-none text-white drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]">{countdown}</span>
-              <span className="mt-4 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white">Encuentra a Stuttgart</span>
-            </div>
-          )}
 
           {/* Click Ripple Indicator */}
           {clickEffect && (
@@ -169,16 +145,31 @@ export function BusquedaPage() {
             />
           )}
 
-          <img
-            src={currentImage.src}
-            alt={currentImage.alt}
-            loading="eager"
-            decoding="async"
-            className={`m-auto block max-h-full max-w-full select-none object-contain transition-transform duration-300 ease-out drop-shadow-md ${
-              isZoomed ? 'scale-150 sm:scale-175' : 'scale-100'
-            }`}
-            draggable={false}
-          />
+          <div className={`relative z-10 grid w-full gap-3 p-2 sm:grid-cols-2 lg:grid-cols-3 ${
+            isZoomed ? 'lg:grid-cols-2' : ''
+          }`}>
+            {CAREER_IMAGES.map((image, index) => (
+              <button
+                key={image.id}
+                type="button"
+                onClick={(e) => handleImageClick(e, index)}
+                disabled={hasFound}
+                aria-label={`Seleccionar imagen de ${image.name}`}
+                className={`rounded-2xl border-2 bg-white/80 p-2 shadow-md transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 ${
+                  index === currentImageIndex && hasFound ? 'border-primary ring-4 ring-primary/30' : 'border-white/80'
+                } ${hasFound ? 'cursor-default' : 'cursor-crosshair'}`}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  loading="eager"
+                  decoding="async"
+                  className="block aspect-[4/3] w-full select-none object-contain"
+                  draggable={false}
+                />
+              </button>
+            ))}
+          </div>
 
           {/* ── Victory Celebration Overlay ── */}
           {hasFound && (
@@ -203,7 +194,7 @@ export function BusquedaPage() {
                   </h2>
                   <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm sm:text-base font-extrabold text-white">
                     <span>Tiempo récord:</span>
-                    <span className="text-accent font-mono tracking-wider">{timer.formatted}</span>
+                    <span className="text-accent font-mono tracking-wider">{formatted}</span>
                   </div>
                 </div>
 
@@ -255,17 +246,13 @@ export function BusquedaPage() {
               urgency === 'intense' ? 'bg-primary text-white' : urgency === 'warning' ? 'bg-accent text-white' : 'bg-slate-900 text-white'
             }`}>
               <span className="text-xs font-semibold animate-pulse">⏱️</span>
-              <span className="font-mono text-base font-black tracking-widest">{timer.formatted}</span>
+              <span className="font-mono text-base font-black tracking-widest">{formatted}</span>
             </div>
 
             {!hasFound ? (
-              <button
-                onClick={handleFound}
-                disabled={countdown !== null}
-                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-orange-500 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
-              >
-                <span>✋ ¡LO ENCONTRÉ!</span>
-              </button>
+              <div className="col-span-3 flex min-h-14 w-full items-center justify-center rounded-2xl bg-slate-100 px-3 py-3 text-center text-xs font-bold text-slate-600 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-sm">
+                Selecciona la imagen donde está Stuttgart
+              </div>
             ) : (
               <button
                 onClick={handleNextChallenge}
@@ -276,13 +263,18 @@ export function BusquedaPage() {
             )}
 
             {/* Stuttgart companion — dynamically reacts to game state */}
-            <img
-              src={companionImage}
-              alt="Stuttgart"
-              loading="lazy"
-              decoding="async"
-              className="hidden sm:block h-12 w-12 object-contain drop-shadow-md transition-all duration-300"
-            />
+            <div className="hidden items-center gap-2 sm:flex">
+              <span className="rounded-2xl bg-slate-900 px-3 py-2 text-[11px] font-black text-white shadow-md">
+                {hasFound ? '¡Lo encontraste!' : elapsedSeconds > 0 ? '¡Rápido, el tiempo corre!' : '¡Busca a Stuttgart!'}
+              </span>
+              <img
+                src={companionImage}
+                alt="Stuttgart"
+                loading="lazy"
+                decoding="async"
+                className="h-12 w-12 object-contain drop-shadow-md transition-all duration-300"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -291,8 +283,9 @@ export function BusquedaPage() {
       {showRegistration && (
         <RegistrationModal
           juego="busqueda"
-          resultado={timer.formatted}
+          resultado={formatted}
           onClose={handleCloseRegistration}
+          onSuccess={handleRegistrationSuccess}
         />
       )}
     </div>

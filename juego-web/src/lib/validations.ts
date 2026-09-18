@@ -5,7 +5,7 @@ import { z } from 'zod';
  *
  * Fields:
  *  - nombre:   min 2 chars
- *  - telefono: Colombian mobile format ^3[0-9]{9}$ (10 digits, no country code)
+ *  - telefono: Colombian mobile format, with or without the +57 country code
  *  - correo:   optional email
  *  - carrera:  optional carrera from pregrado list
  *  - consent:  must be true
@@ -30,8 +30,8 @@ export const registrationSchema = z.object({
   telefono: z
     .string()
     .regex(
-      /^[3][0-9]{9}$/,
-      'Formato inválido. Ingrese 10 dígitos (ej: 3001234567)',
+      /^(?:3[0-9]{9}|\+573[0-9]{9})$/,
+      'Formato inválido. Ingrese 3001234567 o +573001234567',
     ),
   correo: z
     .string()
@@ -51,3 +51,7 @@ export const registrationSchema = z.object({
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 export type CarreraPregrado = typeof CARRERAS_PREGRADO[number];
+
+export function normalizePhone(phone: string): string {
+  return phone.startsWith('+57') ? phone : `+57${phone}`;
+}

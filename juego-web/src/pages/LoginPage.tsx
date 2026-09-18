@@ -43,7 +43,7 @@ export function LoginPage() {
         <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-18 w-18 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 ring-4 ring-primary/10 h-20 w-20">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 ring-4 ring-primary/10">
               <svg
                 className="h-10 w-10 text-primary"
                 fill="none"
