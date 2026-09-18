@@ -96,7 +96,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
           <div className="relative mb-3 flex justify-center">
             <div className="absolute bottom-1 h-8 w-32 rounded-full bg-orange-300/30 blur-xl" />
             <img
-              src="/images/stuttgart-ganador.png"
+              src="/images/stuttgart-ganador.webp"
               alt="Stuttgart celebrando tu victoria"
               decoding="async"
               className="stuttgart-celebration relative z-10 h-28 w-auto object-contain drop-shadow-[0_12px_12px_rgba(74,53,28,0.25)]"
@@ -293,7 +293,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
 
             {/* ── Server error ── */}
             {submitError && (
-              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-600 font-medium">
+              <div role="alert" className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-600 font-medium">
                 ⚠️ Error al registrar: {submitError}
               </div>
             )}
@@ -302,7 +302,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
             <button
               type="submit"
               disabled={!consent || isSubmitting}
-              className={`btn-glow w-full rounded-full py-4 text-sm font-extrabold uppercase tracking-wider text-white shadow-xl transition-all ${
+              className={`btn-glow w-full rounded-full py-4 text-sm font-extrabold uppercase tracking-wider text-white shadow-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary ${
                 !consent || isSubmitting
                   ? 'cursor-not-allowed bg-gray-300 opacity-60'
                   : 'bg-gradient-to-r from-primary to-accent text-gray-950 hover:scale-[1.02] active:scale-95 hover:shadow-primary/30'

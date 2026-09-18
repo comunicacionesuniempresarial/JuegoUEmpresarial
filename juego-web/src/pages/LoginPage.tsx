@@ -64,7 +64,7 @@ export function LoginPage() {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div role="alert" className="mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
               <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -107,7 +107,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover hover:scale-[1.02] hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover hover:scale-[1.02] hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
             >
               {submitting ? (
                 <span className="flex items-center justify-center gap-2">

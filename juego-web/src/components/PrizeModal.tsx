@@ -3,13 +3,19 @@ import { sound } from '../lib/sound';
 interface PrizeModalProps {
   prize: string;
   onClose: () => void;
+  /** Optional kiosk escape hatch: dismiss without opening registration. */
+  onSkip?: () => void;
 }
 
-export function PrizeModal({ prize, onClose }: PrizeModalProps) {
+export function PrizeModal({ prize, onClose, onSkip }: PrizeModalProps) {
   const isScholarship = prize.toLowerCase().includes('beca');
   const handleProceed = () => {
     sound.playClick();
     onClose();
+  };
+  const handleSkip = () => {
+    sound.playClick();
+    onSkip?.();
   };
 
   return (
@@ -48,7 +54,7 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
           </div>
 
           <span className={`inline-block rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider mb-2 ${
-            isScholarship ? 'border-accent bg-accent/10 text-accent' : 'border-primary/20 bg-primary/10 text-primary'
+            isScholarship ? 'border-accent bg-accent/10 text-[#C24A1A]' : 'border-primary/20 bg-primary/10 text-primary'
           }`}>
             {isScholarship ? '¡Premio mayor!' : '¡Premio ganado!'}
           </span>
@@ -70,11 +76,20 @@ export function PrizeModal({ prize, onClose }: PrizeModalProps) {
 
           <button
             onClick={handleProceed}
-            className="btn-glow flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-4 text-base font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 hover:shadow-primary/40"
+            className="btn-glow flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-4 text-base font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 hover:shadow-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
           >
             <span>Registrar</span>
             <span>→</span>
           </button>
+          {onSkip && (
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="mt-3 w-full rounded-full px-6 py-2 text-sm font-semibold text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
+            >
+              Ahora no
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ export function BottomNav() {
   };
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center justify-center py-2 px-3 transition-all duration-200 rounded-2xl relative ${
+    `flex flex-col items-center justify-center py-2 px-3 transition-all duration-200 rounded-2xl relative active:scale-95 ${
       isActive
         ? 'text-primary font-bold scale-105'
         : 'text-gray-500 hover:text-primary hover:bg-primary/5 font-medium'

@@ -75,10 +75,10 @@ export function BusquedaPage() {
 
   const currentImage = CAREER_IMAGES[currentImageIndex];
   const companionImage = countdown !== null
-    ? '/images/stuttgart-sonriente.png'
+    ? '/images/stuttgart-sonriente.webp'
     : hasFound
-      ? '/images/stuttgart-ganador.png'
-      : '/images/stuttgart-investigador.png';
+      ? '/images/stuttgart-ganador.webp'
+      : '/images/stuttgart-investigador.webp';
   const elapsedSeconds = Math.floor(timer.elapsedMs / 1000);
   const urgency = elapsedSeconds >= 20 ? 'intense' : elapsedSeconds >= 10 ? 'warning' : 'calm';
 
@@ -186,7 +186,7 @@ export function BusquedaPage() {
               <div className="animate-scale-in flex max-w-md w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center text-white shadow-2xl backdrop-blur-xl">
                 <div className="relative">
                   <img
-                    src="/images/stuttgart-investigador.png"
+                    src="/images/stuttgart-investigador.webp"
                     alt="Stuttgart Encontrado"
                     loading="lazy"
                     decoding="async"
@@ -210,13 +210,13 @@ export function BusquedaPage() {
                 <div className="flex w-full flex-col sm:flex-row items-center gap-2.5 mt-1">
                   <button
                     onClick={handleShowRegistration}
-                    className="btn-glow flex-1 w-full rounded-full bg-secondary px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider text-gray-950 shadow-xl transition-all hover:scale-105 active:scale-95"
+                    className="btn-glow flex-1 w-full rounded-full bg-secondary px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider text-gray-950 shadow-xl transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary"
                   >
                     📝 Registrar
                   </button>
                   <button
                     onClick={handleNextChallenge}
-                    className="w-full sm:w-auto rounded-full border border-white/30 bg-white/10 px-4 py-3 text-xs sm:text-sm font-semibold text-white hover:bg-white/20 transition-all"
+                    className="w-full sm:w-auto rounded-full border border-white/30 bg-white/10 px-4 py-3 text-xs sm:text-sm font-semibold text-white hover:bg-white/20 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white"
                   >
                     🔄 Otra lámina
                   </button>
@@ -231,7 +231,7 @@ export function BusquedaPage() {
           <div className="grid w-full grid-cols-[auto_auto_1fr] items-center gap-2 sm:flex sm:w-auto">
             <button
               onClick={toggleZoom}
-              className={`flex min-h-12 min-w-12 items-center justify-center rounded-2xl border px-3 text-sm font-bold transition-all ${
+              className={`flex min-h-12 min-w-12 items-center justify-center rounded-2xl border px-3 text-sm font-bold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary ${
                 isZoomed
               ? 'border-secondary bg-secondary text-gray-950 shadow-lg shadow-secondary/20'
                 : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-primary/5 hover:text-primary'
@@ -244,7 +244,7 @@ export function BusquedaPage() {
 
             <button
               onClick={handleNextChallenge}
-              className="flex min-h-12 min-w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 transition-all hover:bg-primary/5 hover:text-primary active:scale-95"
+              className="flex min-h-12 min-w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 transition-all hover:bg-primary/5 hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary"
               title="Cambiar a otra lámina"
               aria-label="Otra lámina"
             >
@@ -262,14 +262,14 @@ export function BusquedaPage() {
               <button
                 onClick={handleFound}
                 disabled={countdown !== null}
-                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-orange-500 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
+                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-orange-500 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-primary/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
               >
                 <span>✋ ¡LO ENCONTRÉ!</span>
               </button>
             ) : (
               <button
                 onClick={handleNextChallenge}
-                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-slate-900 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-lg transition-all hover:bg-slate-800 active:scale-95 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
+                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-slate-900 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-lg transition-all hover:bg-slate-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
               >
                 <span>🔄 SIGUIENTE RETO</span>
               </button>

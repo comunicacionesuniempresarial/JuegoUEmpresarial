@@ -10,7 +10,7 @@ export function NotFoundPage() {
 
       <div className="text-center">
         <img
-          src="/images/stuttgart-sonriente.png"
+          src="/images/stuttgart-sonriente.webp"
           alt="Stuttgart perdido"
           className="mx-auto mb-6 h-40 w-auto animate-bounce drop-shadow-xl"
         />

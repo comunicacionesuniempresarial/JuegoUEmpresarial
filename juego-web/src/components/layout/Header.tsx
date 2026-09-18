@@ -55,7 +55,7 @@ export function Header() {
                 width="175"
                 height="48"
                 decoding="async"
-                className="h-7 w-auto max-w-[82px] object-contain transition-transform group-hover:scale-105 sm:h-10 sm:max-w-[175px]"
+                className="h-7 w-auto max-w-[68px] object-contain transition-transform group-hover:scale-105 sm:h-10 sm:max-w-[175px]"
               />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
@@ -118,7 +118,7 @@ export function Header() {
             {/* Sound Toggle Button */}
             <button
               onClick={toggleAudio}
-              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gray-100/90 text-gray-700 transition-all hover:bg-gray-200 hover:scale-105 active:scale-90 border border-gray-200/60 shadow-xs"
+              className="flex h-10 w-10 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gray-100/90 text-gray-700 transition-all hover:bg-gray-200 hover:scale-105 active:scale-90 border border-gray-200/60 shadow-xs"
               title={soundActive ? 'Silenciar efectos' : 'Activar efectos de sonido'}
               aria-label={soundActive ? 'Silenciar efectos' : 'Activar efectos de sonido'}
             >

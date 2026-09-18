@@ -15,9 +15,9 @@ const STUTTGART_MESSAGES: Record<StuttgartState, string> = {
 };
 
 const STUTTGART_IMAGES: Record<StuttgartState, string> = {
-  idle: '/images/stuttgart-sonriente.png',
-  spinning: '/images/stuttgart-ruleta.png',
-  won: '/images/stuttgart-ganador.png',
+  idle: '/images/stuttgart-sonriente.webp',
+  spinning: '/images/stuttgart-ruleta.webp',
+  won: '/images/stuttgart-ganador.webp',
 };
 
 export function RuletaPage() {
@@ -49,6 +49,11 @@ export function RuletaPage() {
     setShowRegistration(true);
   }, []);
 
+  const handleSkipPrize = useCallback(() => {
+    setPrizeWon(null);
+    setStuttgartState('idle');
+  }, []);
+
   const handleCloseRegistration = useCallback(() => {
     setShowRegistration(false);
     setStuttgartState('idle');
@@ -77,7 +82,7 @@ export function RuletaPage() {
         <button
           onClick={handleSpin}
           disabled={isSpinning}
-          className={`mt-5 min-h-16 w-full touch-manipulation rounded-2xl px-8 py-4 text-xl font-black uppercase tracking-wider text-white shadow-xl transition-all duration-200 sm:text-2xl ${
+          className={`mt-5 min-h-16 w-full touch-manipulation rounded-2xl px-8 py-4 text-xl font-black uppercase tracking-wider text-white shadow-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary sm:text-2xl ${
             isSpinning
               ? 'cursor-not-allowed bg-slate-300 opacity-70'
               : 'bg-gradient-to-r from-primary via-accent to-primary hover:brightness-105 hover:scale-105 active:scale-95 hover:shadow-primary/40'
@@ -107,7 +112,7 @@ export function RuletaPage() {
       </div>
 
       {/* ── Modals ── */}
-      {prizeWon && <PrizeModal prize={prizeWon.label} onClose={handleClosePrizeModal} />}
+      {prizeWon && <PrizeModal prize={prizeWon.label} onClose={handleClosePrizeModal} onSkip={handleSkipPrize} />}
       {showRegistration && (
         <RegistrationModal
           juego="ruleta"
