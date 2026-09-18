@@ -6,7 +6,7 @@ const PRIVACY_PDF_URL =
 
 export function TerminosJuegoPage() {
   return (
-    <main className="min-h-[calc(100vh-8rem)] bg-gradient-to-b from-gray-50 to-white px-4 py-12 sm:py-16">
+    <main className="min-h-[calc(100svh-8rem)] bg-gradient-to-b from-gray-50 to-white px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-2xl">
         <div className="rounded-3xl border border-gray-100 bg-white p-6 sm:p-10 shadow-sm">
           {/* Header */}

@@ -134,7 +134,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
                 onChange={(e) => setNombre(e.target.value)}
                 onBlur={() => validateField('nombre', nombre)}
                 placeholder="Ej. Carlos Mendoza"
-                className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all ${
+                className={`w-full rounded-xl border px-4 py-3 text-base sm:text-sm outline-none transition-all ${
                   fieldErrors.nombre
                     ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
                     : isNameValid
@@ -166,7 +166,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
                 onChange={(e) => setTelefono(e.target.value)}
                 onBlur={() => validateField('telefono', telefono)}
                 placeholder="Ej. 3001234567"
-                className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all ${
+                className={`w-full rounded-xl border px-4 py-3 text-base sm:text-sm outline-none transition-all ${
                   fieldErrors.telefono
                     ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
                     : isPhoneValid
@@ -198,7 +198,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
                 onChange={(e) => setCorreo(e.target.value)}
                 onBlur={() => validateField('correo', correo)}
                 placeholder="Ej. estudiante@uniempresarial.edu.co"
-                className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all ${
+                className={`w-full rounded-xl border px-4 py-3 text-base sm:text-sm outline-none transition-all ${
                   fieldErrors.correo
                     ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
                     : correo && isEmailValid
@@ -234,7 +234,7 @@ export function RegistrationModal({ juego, resultado, onClose }: RegistrationMod
 
               {showCarreras && (
                 <div className="mt-2 animate-fade-in">
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {CARRERAS.map((c) => (
                       <button
                         key={c}

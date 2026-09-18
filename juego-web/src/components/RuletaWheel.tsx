@@ -234,7 +234,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
   );
 
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="relative flex w-full max-w-full items-center justify-center overflow-x-clip">
       {/* Glow behind the wheel */}
       <div
         className="absolute rounded-full"

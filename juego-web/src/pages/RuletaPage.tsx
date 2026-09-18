@@ -55,7 +55,7 @@ export function RuletaPage() {
   }, []);
 
   return (
-    <div className="relative flex min-h-full flex-col items-center justify-start gap-5 overflow-y-auto bg-[radial-gradient(circle_at_15%_20%,#ffe0e0_0,transparent_26%),radial-gradient(circle_at_85%_75%,#e0f0fa_0,transparent_30%),linear-gradient(135deg,#F8FAFC_0%,#fff5e7_45%,#effbfa_100%)] p-3 pb-8 sm:justify-center sm:p-6 lg:flex-row lg:gap-14 lg:overflow-hidden lg:p-8">
+    <div className="relative flex min-h-full flex-col items-center justify-start gap-5 overflow-y-auto overflow-x-clip bg-[radial-gradient(circle_at_15%_20%,#ffe0e0_0,transparent_26%),radial-gradient(circle_at_85%_75%,#e0f0fa_0,transparent_30%),linear-gradient(135deg,#F8FAFC_0%,#fff5e7_45%,#effbfa_100%)] p-3 pb-8 sm:justify-center sm:p-6 lg:flex-row lg:gap-14 lg:overflow-hidden lg:p-8">
 
       {/* ── Left: Stuttgart ── */}
       <div className="flex w-full max-w-[18rem] flex-col items-center text-center sm:w-60 sm:max-w-none">

@@ -298,6 +298,15 @@ a {
   animation: sparkle-twinkle 2.8s ease-in-out infinite 1.2s;
 }
 
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
@@ -309,7 +318,8 @@ a {
   .confetti-particle,
   .btn-glow::before,
   .roulette-pointer--tick,
-  .stuttgart-celebration {
+  .stuttgart-celebration,
+  .animate-spin-slow {
     animation: none !important;
   }
 }

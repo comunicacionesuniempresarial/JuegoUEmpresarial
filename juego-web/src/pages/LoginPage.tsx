@@ -34,7 +34,7 @@ export function LoginPage() {
 
   return (
     <div
-      className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12"
+      className="flex min-h-[calc(100svh-8rem)] items-center justify-center px-4 py-12"
       style={{
         background: 'linear-gradient(135deg, rgba(239,18,24,0.06) 0%, rgba(0,61,165,0.06) 100%)',
       }}
@@ -85,7 +85,7 @@ export function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@uniempresarial.edu.co"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base sm:text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
@@ -100,7 +100,7 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base sm:text-sm transition-all focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
 

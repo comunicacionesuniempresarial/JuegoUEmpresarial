@@ -15,12 +15,15 @@ export function Layout() {
     }`}>
       <Header />
       <main className={`flex-1 flex flex-col ${
-        isKioskGamePage ? 'min-h-0 lg:overflow-hidden' : 'pb-16 md:pb-0'
+        isKioskGamePage ? 'min-h-0 pb-24 md:pb-0 lg:overflow-hidden' : 'pb-16 md:pb-0'
       }`}>
         <Outlet />
       </main>
       {!isKioskGamePage && <Footer />}
-      {!isKioskGamePage && <BottomNav />}
+      {/* BottomNav is mobile-only (md:hidden) so it is safe to render on every
+          page: kiosk game pages previously left mobile users with no way to
+          navigate between Inicio / Ruleta / Búsqueda. */}
+      <BottomNav />
       <OfflineBanner />
     </div>
   );

@@ -14,7 +14,7 @@ export function BottomNav() {
     }`;
 
   return (
-    <div className="fixed bottom-3 left-4 right-4 z-40 md:hidden">
+    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-4 right-4 z-40 md:hidden">
       <nav className="glass-panel mx-auto flex items-center justify-around rounded-3xl px-2 py-1 shadow-2xl border border-white/60 bg-white/85 backdrop-blur-xl">
         <NavLink to="/" end className={navItemClass} onClick={handleNavClick}>
           {({ isActive }) => (

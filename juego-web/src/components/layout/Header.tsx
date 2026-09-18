@@ -65,8 +65,8 @@ export function Header() {
           </NavLink>
 
           {/* Center: Title — always centered via grid */}
-          <div className="flex flex-col items-center text-center min-w-0">
-            <span className="max-w-[6.5rem] truncate whitespace-nowrap text-[10px] font-black tracking-[-0.03em] text-slate-900 sm:max-w-none sm:text-xl lg:text-2xl">
+          <div className="flex flex-col items-center text-center min-w-0 px-1">
+            <span className="text-[11px] font-black leading-tight tracking-[-0.02em] text-slate-900 sm:whitespace-nowrap sm:text-xl lg:text-2xl">
               ¿Dónde Está Stuttgart?
             </span>
             <span className="mt-0.5 hidden whitespace-nowrap text-[8px] font-black uppercase tracking-[0.18em] text-teal-700 sm:block sm:text-[9px]">
@@ -103,10 +103,12 @@ export function Header() {
                 <span className="hidden sm:inline">Admin</span>
             </NavLink>
 
-            {/* Kiosk Fullscreen Mode Button */}
+            {/* Kiosk Fullscreen Mode Button — hidden on mobile: iOS Safari
+                does not support requestFullscreen on iPhone and the header
+                is already crowded at 320px. */}
             <button
               onClick={toggleFullscreen}
-              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gray-100/90 text-gray-700 transition-all hover:bg-gray-200 hover:scale-105 active:scale-90 border border-gray-200/60 shadow-xs"
+              className="hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gray-100/90 text-gray-700 transition-all hover:bg-gray-200 hover:scale-105 active:scale-90 border border-gray-200/60 shadow-xs"
               title={isFullscreen ? 'Salir de Pantalla Completa' : 'Modo Pantalla Completa (Kiosco)'}
               aria-label="Pantalla completa"
             >

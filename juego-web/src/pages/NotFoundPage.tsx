@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export function NotFoundPage() {
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 py-16">
+    <div className="flex min-h-[calc(100svh-8rem)] flex-col items-center justify-center px-4 py-16">
       {/* Colourful backdrop spot */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden -z-10">
         <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/15 blur-3xl" />

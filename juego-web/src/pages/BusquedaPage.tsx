@@ -135,7 +135,9 @@ export function BusquedaPage() {
         {/* Visual Challenge Canvas */}
         <div
           onClick={handleImageClick}
-          className={`relative flex min-h-[48vh] items-center justify-center overflow-auto rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:min-h-0 sm:rounded-[2rem] ${
+          className={`relative flex min-h-[48vh] overflow-auto rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:min-h-0 sm:rounded-[2rem] ${
+            isZoomed ? 'items-start justify-start' : 'items-center justify-center'
+          } ${
             urgency === 'intense'
               ? 'border-primary/50 shadow-[0_0_0_4px_rgba(239,18,24,0.12),0_20px_54px_rgba(239,18,24,0.16)]'
               : urgency === 'warning'
@@ -172,7 +174,7 @@ export function BusquedaPage() {
             alt={currentImage.alt}
             loading="eager"
             decoding="async"
-            className={`block max-h-full max-w-full select-none object-contain transition-transform duration-300 ease-out drop-shadow-md ${
+            className={`m-auto block max-h-full max-w-full select-none object-contain transition-transform duration-300 ease-out drop-shadow-md ${
               isZoomed ? 'scale-150 sm:scale-175' : 'scale-100'
             }`}
             draggable={false}
