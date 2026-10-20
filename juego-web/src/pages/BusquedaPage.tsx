@@ -36,6 +36,7 @@ export function BusquedaPage() {
   const [isZoomed, setIsZoomed] = useState(false);
   const [clickEffect, setClickEffect] = useState<{ x: number; y: number } | null>(null);
   const clickEffectRef = useRef<number | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   const beginChallenge = useCallback(() => {
     reset();
@@ -79,10 +80,16 @@ export function BusquedaPage() {
   };
 
   const handleImageClick = (e: React.MouseEvent<HTMLButtonElement>, imageIndex: number) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setClickEffect({ x, y });
+    // The ripple is painted inside the scrolling canvas, so the offset has
+    // to be measured against the canvas (including its scroll offset),
+    // not against the tapped card.
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left + canvas.scrollLeft;
+      const y = e.clientY - rect.top + canvas.scrollTop;
+      setClickEffect({ x, y });
+    }
     sound.playClick();
     if (clickEffectRef.current) clearTimeout(clickEffectRef.current);
     clickEffectRef.current = window.setTimeout(() => setClickEffect(null), 600);
@@ -109,45 +116,79 @@ export function BusquedaPage() {
     setIsZoomed(!isZoomed);
   };
 
+  const statusLabel = isZoomed
+    ? 'Lupa activa'
+    : urgency === 'intense'
+      ? '¡No te rindas!'
+      : urgency === 'warning'
+        ? '¡Sigue buscando!'
+        : 'Encuentra a Stuttgart';
+
   return (
-    <div className={`relative mx-auto flex min-h-full w-full flex-col overflow-y-auto px-2 py-2 transition-colors duration-700 sm:px-6 lg:overflow-hidden select-none ${
-      urgency === 'intense'
-        ? 'bg-[radial-gradient(circle_at_8%_16%,#ffe2df_0,transparent_25%),linear-gradient(145deg,#fff7f5_0%,#F8FAFC_100%)]'
-        : urgency === 'warning'
-          ? 'bg-[radial-gradient(circle_at_8%_16%,#fff0d2_0,transparent_25%),linear-gradient(145deg,#F8FAFC_0%,#fffdf8_100%)]'
-          : 'bg-[radial-gradient(circle_at_8%_16%,#e0f5f2_0,transparent_25%),radial-gradient(circle_at_92%_86%,#fff0d2_0,transparent_30%),linear-gradient(145deg,#f8fffe_0%,#F8FAFC_100%)]'
-    }`}>
-      {/* ── Main game area: the image is the protagonist ── */}
-      <div className="flex min-h-[calc(100svh-13rem)] w-full flex-1 flex-col gap-3 sm:min-h-0">
-        {/* Visual Challenge Canvas */}
+    <div
+      className={`relative mx-auto flex h-full min-h-0 w-full flex-col overflow-hidden select-none transition-colors duration-700 ${
+        urgency === 'intense'
+          ? 'bg-[radial-gradient(circle_at_8%_16%,#ffe2df_0,transparent_25%),linear-gradient(145deg,#fff7f5_0%,#F8FAFC_100%)]'
+          : urgency === 'warning'
+            ? 'bg-[radial-gradient(circle_at_8%_16%,#fff0d2_0,transparent_25%),linear-gradient(145deg,#F8FAFC_0%,#fffdf8_100%)]'
+            : 'bg-[radial-gradient(circle_at_8%_16%,#e0f5f2_0,transparent_25%),radial-gradient(circle_at_92%_86%,#fff0d2_0,transparent_30%),linear-gradient(145deg,#f8fffe_0%,#F8FAFC_100%)]'
+      }`}
+    >
+      {/* ── HUD: status + timer ──────────────────────────────────────
+          Pinned above the board so the countdown is always visible while
+          the player scrolls through the sheets. */}
+      <div className="flex shrink-0 items-center gap-2 px-2 pt-2 pb-1 sm:px-6 sm:py-3">
+        <span className="busqueda-hud-badge min-w-0 shrink-0 truncate rounded-full border border-white/70 bg-slate-900/80 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-lg backdrop-blur">
+          {statusLabel}
+        </span>
         <div
-          className={`relative min-h-[48vh] overflow-auto rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:min-h-0 sm:rounded-[2rem] ${
+          className={`ml-auto flex shrink-0 items-center gap-2 rounded-2xl px-3 py-1.5 shadow-xs transition-colors duration-500 ${
+            urgency === 'intense'
+              ? 'bg-primary text-white'
+              : urgency === 'warning'
+                ? 'bg-accent text-white'
+                : 'bg-slate-900 text-white'
+          }`}
+          role="timer"
+          aria-live="off"
+        >
+          <span className="text-xs font-semibold animate-pulse">⏱️</span>
+          <span className="font-mono text-base font-black tracking-widest">{formatted}</span>
+        </div>
+      </div>
+
+      {/* ── Main game area: the image is the protagonist ── */}
+      <div className="flex min-h-0 flex-1 flex-col gap-2 sm:gap-3">
+        {/* Visual Challenge Canvas — scrolls internally, the HUD and the
+            action bar stay pinned. */}
+        <div
+          ref={canvasRef}
+          className={`relative min-h-0 flex-1 overflow-y-auto scroll-touch no-scrollbar rounded-[1.5rem] border p-2 shadow-[0_20px_54px_rgba(13,27,62,0.12),inset_0_0_30px_rgba(0,61,165,0.05)] backdrop-blur transition-all duration-500 sm:rounded-[2rem] ${
             urgency === 'intense'
               ? 'border-primary/50 shadow-[0_0_0_4px_rgba(239,18,24,0.12),0_20px_54px_rgba(239,18,24,0.16)]'
               : urgency === 'warning'
                 ? 'border-accent/50 shadow-[0_0_0_4px_rgba(255,107,53,0.1),0_20px_54px_rgba(255,107,53,0.14)]'
                 : 'border-white/80 bg-white/80'
-          } ${
-            isZoomed ? 'cursor-zoom-out' : 'cursor-crosshair'
-          }`}
+          } ${isZoomed ? 'cursor-zoom-out' : 'cursor-crosshair'}`}
         >
           {/* Subtle grid pattern background */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(0,61,165,0.18)_1px,transparent_1px)] [background-size:18px_18px] opacity-50" />
-          <div className="pointer-events-none absolute left-5 top-5 z-10 rounded-full border border-white/70 bg-slate-900/80 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-lg backdrop-blur">
-            {isZoomed ? 'Lupa activa' : urgency === 'intense' ? '¡No te rindas!' : urgency === 'warning' ? '¡Sigue buscando!' : 'Encuentra a Stuttgart'}
-          </div>
 
           {/* Click Ripple Indicator */}
           {clickEffect && (
             <span
-              className="pointer-events-none absolute h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-secondary bg-secondary/20 animate-ping z-20"
+              className="pointer-events-none absolute z-20 h-12 w-12 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full border-2 border-secondary bg-secondary/20"
               style={{ left: clickEffect.x, top: clickEffect.y }}
             />
           )}
 
-          <div className={`relative z-10 grid w-full gap-3 p-2 sm:grid-cols-2 lg:grid-cols-3 ${
-            isZoomed ? 'lg:grid-cols-2' : ''
-          }`}>
+          <div
+            className={`busqueda-grid relative z-10 grid w-full gap-2 sm:gap-3 ${
+              isZoomed
+                ? 'busqueda-grid--zoomed grid-cols-1'
+                : 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'
+            }`}
+          >
             {CAREER_IMAGES.map((image, index) => (
               <button
                 key={image.id}
@@ -155,7 +196,7 @@ export function BusquedaPage() {
                 onClick={(e) => handleImageClick(e, index)}
                 disabled={hasFound}
                 aria-label={`Seleccionar imagen de ${image.name}`}
-                className={`rounded-2xl border-2 bg-white/80 p-2 shadow-md transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 ${
+                className={`rounded-2xl border-2 bg-white/80 p-1.5 shadow-md transition-transform duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 sm:p-2 ${
                   index === currentImageIndex && hasFound ? 'border-primary ring-4 ring-primary/30' : 'border-white/80'
                 } ${hasFound ? 'cursor-default' : 'cursor-crosshair'}`}
               >
@@ -170,62 +211,17 @@ export function BusquedaPage() {
               </button>
             ))}
           </div>
-
-          {/* ── Victory Celebration Overlay ── */}
-          {hasFound && (
-            <div className="animate-fade-in absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md">
-              <div className="animate-scale-in flex max-w-md w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center text-white shadow-2xl backdrop-blur-xl">
-                <div className="relative">
-                  <img
-                    src="/images/stuttgart-investigador.webp"
-                    alt="Stuttgart Encontrado"
-                    loading="lazy"
-                    decoding="async"
-                    className="h-28 sm:h-36 w-auto rounded-2xl shadow-2xl drop-shadow-2xl border-2 border-white/50"
-                  />
-                  <span className="absolute -top-2 -right-2 rounded-full bg-accent p-1.5 text-lg shadow-lg animate-bounce">
-                    🎉
-                  </span>
-                </div>
-
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
-                    ¡Encontraste a Stuttgart! 🏆
-                  </h2>
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm sm:text-base font-extrabold text-white">
-                    <span>Tiempo récord:</span>
-                    <span className="text-accent font-mono tracking-wider">{formatted}</span>
-                  </div>
-                </div>
-
-                <div className="flex w-full flex-col sm:flex-row items-center gap-2.5 mt-1">
-                  <button
-                    onClick={handleShowRegistration}
-                    className="btn-glow flex-1 w-full rounded-full bg-secondary px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider text-gray-950 shadow-xl transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary"
-                  >
-                    📝 Registrar
-                  </button>
-                  <button
-                    onClick={handleNextChallenge}
-                    className="w-full sm:w-auto rounded-full border border-white/30 bg-white/10 px-4 py-3 text-xs sm:text-sm font-semibold text-white hover:bg-white/20 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white"
-                  >
-                    🔄 Otra lámina
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ── Compact touch action bar ── */}
-        <div className="flex shrink-0 flex-col gap-2 rounded-[1.5rem] border border-white/80 bg-white/90 p-2 shadow-[0_14px_34px_rgba(13,27,62,0.1)] backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:rounded-[1.75rem] sm:px-4">
-          <div className="grid w-full grid-cols-[auto_auto_1fr] items-center gap-2 sm:flex sm:w-auto">
+        <div className="busqueda-actionbar flex shrink-0 flex-row items-center gap-2 rounded-[1.5rem] border border-white/80 bg-white/90 p-2 shadow-[0_14px_34px_rgba(13,27,62,0.1)] backdrop-blur-md sm:flex-wrap sm:justify-between sm:gap-3 sm:rounded-[1.75rem] sm:px-4">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={toggleZoom}
-              className={`flex min-h-12 min-w-12 items-center justify-center rounded-2xl border px-3 text-sm font-bold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary ${
+              className={`flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-2xl border px-3 text-sm font-bold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary ${
                 isZoomed
-              ? 'border-secondary bg-secondary text-gray-950 shadow-lg shadow-secondary/20'
-                : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-primary/5 hover:text-primary'
+                  ? 'border-secondary bg-secondary text-gray-950 shadow-lg shadow-secondary/20'
+                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-primary/5 hover:text-primary'
               }`}
               title="Activar / Desactivar Lupa"
               aria-label={isZoomed ? 'Alejar imagen' : 'Acercar imagen'}
@@ -235,32 +231,12 @@ export function BusquedaPage() {
 
             <button
               onClick={handleNextChallenge}
-              className="flex min-h-12 min-w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 transition-all hover:bg-primary/5 hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary"
+              className="flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 transition-all hover:bg-primary/5 hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary"
               title="Cambiar a otra lámina"
               aria-label="Otra lámina"
             >
               🔄
             </button>
-
-            <div className={`flex min-h-12 items-center gap-2 rounded-2xl px-3.5 shadow-xs transition-colors duration-500 ${
-              urgency === 'intense' ? 'bg-primary text-white' : urgency === 'warning' ? 'bg-accent text-white' : 'bg-slate-900 text-white'
-            }`}>
-              <span className="text-xs font-semibold animate-pulse">⏱️</span>
-              <span className="font-mono text-base font-black tracking-widest">{formatted}</span>
-            </div>
-
-            {!hasFound ? (
-              <div className="col-span-3 flex min-h-14 w-full items-center justify-center rounded-2xl bg-slate-100 px-3 py-3 text-center text-xs font-bold text-slate-600 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-sm">
-                Selecciona la imagen donde está Stuttgart
-              </div>
-            ) : (
-              <button
-                onClick={handleNextChallenge}
-                className="btn-glow col-span-3 flex min-h-14 w-full touch-manipulation items-center justify-center gap-2 rounded-2xl bg-slate-900 px-3 py-3 text-sm font-black uppercase tracking-wider text-white shadow-lg transition-all hover:bg-slate-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 sm:col-span-1 sm:min-w-64 sm:flex-none sm:px-5 sm:text-lg"
-              >
-                <span>🔄 SIGUIENTE RETO</span>
-              </button>
-            )}
 
             {/* Stuttgart companion — dynamically reacts to game state */}
             <div className="hidden items-center gap-2 sm:flex">
@@ -276,8 +252,69 @@ export function BusquedaPage() {
               />
             </div>
           </div>
+
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none sm:justify-end">
+            {!hasFound ? (
+              <div className="busqueda-hint flex min-h-12 min-w-0 flex-1 items-center justify-center truncate rounded-2xl bg-slate-100 px-3 py-2 text-center text-xs font-bold text-slate-600 sm:min-w-56 sm:flex-none sm:text-sm">
+                <span className="sm:hidden">¿Dónde está Stuttgart?</span>
+                <span className="hidden sm:inline">Selecciona la imagen donde está Stuttgart</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleNextChallenge}
+                className="btn-glow flex min-h-12 w-full flex-1 touch-manipulation items-center justify-center gap-2 rounded-2xl bg-slate-900 px-3 py-2 text-xs font-black uppercase tracking-wider text-white shadow-lg transition-all hover:bg-slate-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 sm:min-w-56 sm:flex-none sm:text-sm lg:text-lg"
+              >
+                <span>🔄 SIGUIENTE RETO</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* ── Victory Celebration Overlay ── */}
+      {hasFound && (
+        <div className="animate-fade-in absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md">
+          <div className="animate-scale-in flex max-w-md w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center text-white shadow-2xl backdrop-blur-xl">
+            <div className="relative">
+              <img
+                src="/images/stuttgart-investigador.webp"
+                alt="Stuttgart Encontrado"
+                loading="lazy"
+                decoding="async"
+                className="h-28 w-auto rounded-2xl border-2 border-white/50 shadow-2xl drop-shadow-2xl sm:h-36"
+              />
+              <span className="absolute -top-2 -right-2 animate-bounce rounded-full bg-accent p-1.5 text-lg shadow-lg">
+                🎉
+              </span>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-black leading-tight text-white sm:text-2xl">
+                ¡Encontraste a Stuttgart! 🏆
+              </h2>
+              <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-extrabold text-white sm:text-base">
+                <span>Tiempo récord:</span>
+                <span className="font-mono tracking-wider text-accent">{formatted}</span>
+              </div>
+            </div>
+
+            <div className="mt-1 flex w-full flex-col items-center gap-2.5 sm:flex-row">
+              <button
+                onClick={handleShowRegistration}
+                className="btn-glow w-full flex-1 rounded-full bg-secondary px-5 py-3 text-xs font-black uppercase tracking-wider text-gray-950 shadow-xl transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary sm:text-sm"
+              >
+                📝 Registrar
+              </button>
+              <button
+                onClick={handleNextChallenge}
+                className="w-full rounded-full border border-white/30 bg-white/10 px-4 py-3 text-xs font-semibold text-white transition-all hover:bg-white/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white sm:w-auto sm:text-sm"
+              >
+                🔄 Otra lámina
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Registration Modal ── */}
       {showRegistration && (

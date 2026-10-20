@@ -234,7 +234,7 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
   );
 
   return (
-    <div className="relative flex w-full max-w-full items-center justify-center overflow-x-clip">
+    <div className="relative flex w-fit max-w-full items-center justify-center overflow-x-clip">
       {/* Glow behind the wheel */}
       <div
         className="absolute rounded-full"
@@ -246,16 +246,19 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
         }}
       />
 
-      {/* ── Wheel ── */}
+      {/* ── Wheel ──
+          Sized from the --wheel-size token (index.css) so it always fits
+          the available width *and* height, including short landscape
+          viewports where a width-based size would overflow. */}
       <div
         ref={wheelRef}
-        className="relative z-10 h-[clamp(17rem,82vw,30rem)] w-[clamp(17rem,82vw,30rem)] will-change-transform drop-shadow-[0_22px_34px_rgba(15,39,71,0.28)] sm:h-[min(62vw,610px)] sm:w-[min(62vw,610px)] lg:h-[min(84vh,680px)] lg:w-[min(84vh,680px)]"
+        className="relative z-10 h-[var(--wheel-size)] w-[var(--wheel-size)] will-change-transform drop-shadow-[0_22px_34px_rgba(15,39,71,0.28)]"
       >
         {wheelGraphic}
       </div>
 
       {/* ── Center hub ── */}
-      <div className="absolute z-20 flex h-[78px] w-[78px] items-center justify-center overflow-hidden rounded-full border-[6px] border-[#fff7df] bg-[#EF1218] shadow-[0_0_0_5px_#FF6B35,0_0_30px_rgba(239,18,24,0.48)] sm:h-[104px] sm:w-[104px]">
+      <div className="absolute z-20 flex h-[var(--hub-size)] w-[var(--hub-size)] items-center justify-center overflow-hidden rounded-full border-[4px] border-[#fff7df] bg-[#EF1218] shadow-[0_0_0_4px_#FF6B35,0_0_30px_rgba(239,18,24,0.48)] sm:border-[6px]">
         <img
           src="/images/stuttgart-ruleta.webp"
           alt="Stuttgart"
@@ -267,13 +270,12 @@ export function RuletaWheel({ prizes, isSpinning, onSpinEnd }: RuletaWheelProps)
       </div>
 
       {/* ── Pointer (top) ── */}
-      <div className="absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-1">
+      <div className="absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-[12%]">
         <svg
           key={pointerTick}
           className={isSpinning ? 'roulette-pointer roulette-pointer--tick' : 'roulette-pointer'}
-          width="38"
-          height="46"
           viewBox="0 0 38 46"
+          style={{ width: 'var(--pointer-size)', height: 'calc(var(--pointer-size) * 1.21)' }}
           aria-hidden="true"
         >
           <circle cx="19" cy="5" r="4" fill="#fff8e8" stroke="#EF1218" strokeWidth="2" />

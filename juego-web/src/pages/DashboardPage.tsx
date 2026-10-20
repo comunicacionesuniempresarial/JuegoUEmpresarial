@@ -95,21 +95,21 @@ export function DashboardPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl">
+      <div className="mb-8 flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-xl sm:h-14 sm:w-14 sm:text-2xl">
             🏛️
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl font-black tracking-tight text-gray-900 sm:text-2xl sm:text-3xl">
                 Panel de Administración
               </h1>
               <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
                 En vivo
               </span>
             </div>
-            <p className="mt-0.5 text-xs sm:text-sm text-gray-500">
+            <p className="mt-0.5 text-xs text-gray-500 sm:text-sm">
               Sesión activa: <span className="font-semibold text-gray-800">{admin?.email ?? 'Administrador'}</span>
             </p>
           </div>
@@ -127,9 +127,9 @@ export function DashboardPage() {
 
           <button
             onClick={() => signOut()}
-            className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 active:scale-95 transition-all shadow-xs"
+            className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-3.5 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 active:scale-95 transition-all shadow-xs sm:px-4"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
             </svg>
             <span>Cerrar Sesión</span>
@@ -161,7 +161,7 @@ export function DashboardPage() {
 
       {/* Distribution Bar */}
       <div className="mb-6 rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
-        <div className="flex items-center justify-between text-xs font-bold text-gray-700 mb-2">
+        <div className="mb-2 flex flex-col items-start gap-1 text-xs font-bold text-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <span>Distribución de Juegos:</span>
           <span>🎡 Ruleta: {ruletaPercentage}% | 🔍 Búsqueda: {busquedaPercentage}%</span>
         </div>
@@ -203,10 +203,10 @@ export function DashboardPage() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="mb-6 flex gap-1 rounded-2xl bg-gray-200/70 p-1.5 backdrop-blur-md">
+      <div className="mb-6 flex flex-col gap-1 rounded-2xl bg-gray-200/70 p-1.5 backdrop-blur-md sm:flex-row">
         <button
           onClick={() => handleTabSwitch('records')}
-          className={`flex-1 rounded-xl px-5 py-3 text-sm font-bold transition-all ${
+          className={`flex-1 rounded-xl px-3 py-3 text-xs font-bold transition-all sm:px-5 sm:text-sm ${
             activeTab === 'records'
               ? 'bg-white text-primary shadow-sm ring-1 ring-black/5'
               : 'text-gray-600 hover:text-gray-900'
@@ -216,7 +216,7 @@ export function DashboardPage() {
         </button>
         <button
           onClick={() => handleTabSwitch('audit')}
-          className={`flex-1 rounded-xl px-5 py-3 text-sm font-bold transition-all ${
+          className={`flex-1 rounded-xl px-3 py-3 text-xs font-bold transition-all sm:px-5 sm:text-sm ${
             activeTab === 'audit'
               ? 'bg-white text-primary shadow-sm ring-1 ring-black/5'
               : 'text-gray-600 hover:text-gray-900'

@@ -346,9 +346,10 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
           ))}
 
           {/* Custom date inputs */}
-          <div className="flex items-center gap-1.5 ml-2">
+          <div className="flex w-full items-center gap-1.5 sm:ml-2 sm:w-auto">
             <input
               type="date"
+              aria-label="Fecha inicial"
               value={dateRange.from ? dateRange.from.split('T')[0] : ''}
               onChange={(e) => {
                 const from = e.target.value ? new Date(e.target.value + 'T00:00:00').toISOString() : null;
@@ -356,11 +357,12 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
                 setQuickDate('all');
                 setPage(1);
               }}
-              className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-semibold text-gray-600 outline-none focus:border-primary"
+              className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-semibold text-gray-600 outline-none focus:border-primary sm:flex-none"
             />
             <span className="text-[10px] text-gray-400">a</span>
             <input
               type="date"
+              aria-label="Fecha final"
               value={dateRange.to ? dateRange.to.split('T')[0] : ''}
               onChange={(e) => {
                 const to = e.target.value ? new Date(e.target.value + 'T23:59:59').toISOString() : null;
@@ -368,7 +370,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
                 setQuickDate('all');
                 setPage(1);
               }}
-              className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-semibold text-gray-600 outline-none focus:border-primary"
+              className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2 py-1 text-[11px] font-semibold text-gray-600 outline-none focus:border-primary sm:flex-none"
             />
           </div>
         </div>
@@ -500,21 +502,21 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
               {record.carrera && (
                 <p className="text-[11px] text-gray-400 truncate">{record.carrera}</p>
               )}
-              <p className="text-[10px] text-gray-300 mt-1">
+              <p className="mt-1 text-[10px] text-gray-400">
                 {record.created_at ? new Date(record.created_at).toLocaleString('es-CO') : ''}
               </p>
               {/* Mobile action buttons */}
-              <div className="flex gap-2 mt-2" onClick={(e) => e.stopPropagation()}>
+              <div className="mt-2 flex gap-2" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => setEditRecord(record)}
-                  className="rounded-lg bg-primary/10 px-3 py-1.5 text-[11px] font-bold text-primary"
+                  className="min-h-9 rounded-lg bg-primary/10 px-3 py-1.5 text-[11px] font-bold text-primary"
                 >
                   ✏️ Editar
                 </button>
                 {canDelete && (
                   <button
                     onClick={() => setDeleteConfirm(record)}
-                    className="rounded-lg bg-red-50 px-3 py-1.5 text-[11px] font-bold text-red-500"
+                    className="min-h-9 rounded-lg bg-red-50 px-3 py-1.5 text-[11px] font-bold text-red-500"
                   >
                     🗑️
                   </button>
@@ -577,31 +579,31 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDeleteConfirm(null)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <div
-            className="relative w-full max-w-sm rounded-3xl border border-gray-100 bg-white p-6 shadow-2xl"
+            className="relative max-h-[calc(100svh-2rem)] w-full max-w-sm overflow-y-auto overscroll-contain rounded-3xl border border-gray-100 bg-white p-5 shadow-2xl sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-black text-gray-900 mb-2">Confirmar Eliminación</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <h3 className="mb-2 text-lg font-black text-gray-900">Confirmar Eliminación</h3>
+            <p className="mb-4 text-sm text-gray-600">
               ¿Eliminar registro de <strong>{deleteConfirm.nombre}</strong>? Esta acción no se puede deshacer.
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <button
                 onClick={() => handleSoftDelete(deleteConfirm)}
-                className="flex-1 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-bold text-amber-700 hover:bg-amber-100 transition-all"
+                className="w-full rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-bold text-amber-700 hover:bg-amber-100 transition-all sm:flex-1"
               >
                 Archivar (Soft Delete)
               </button>
               {admin?.role === 'super_admin' && (
                 <button
                   onClick={() => handleHardDelete(deleteConfirm)}
-                  className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-all"
+                  className="w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-all sm:flex-1"
                 >
                   Eliminar Permanentemente
                 </button>
               )}
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all"
+                className="w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all sm:w-auto"
               >
                 Cancelar
               </button>

@@ -40,10 +40,10 @@ export function LoginPage() {
       }}
     >
       <div className="w-full max-w-md animate-scale-in">
-        <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl">
+        <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-2xl sm:p-8">
           {/* Header */}
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 ring-4 ring-primary/10">
+          <div className="mb-6 text-center sm:mb-8">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 ring-4 ring-primary/10 sm:h-20 sm:w-20">
               <svg
                 className="h-10 w-10 text-primary"
                 fill="none"

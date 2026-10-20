@@ -58,7 +58,7 @@ export function RecordDetailModal({ record, onClose, onEdit, onDelete, canDelete
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-lg rounded-3xl border border-gray-100 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="relative max-h-[calc(100svh-2rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-3xl border border-gray-100 bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -95,24 +95,24 @@ export function RecordDetailModal({ record, onClose, onEdit, onDelete, canDelete
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-gray-100">
+        <div className="mt-6 flex flex-col items-center gap-2 border-t border-gray-100 pt-4 sm:flex-row">
           <button
             onClick={() => { sound.playClick(); onEdit(record); }}
-            className="flex-1 rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-bold text-primary hover:bg-primary/20 transition-all"
+            className="w-full rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-bold text-primary hover:bg-primary/20 transition-all sm:flex-1"
           >
             ✏️ Editar
           </button>
           {canDelete && (
             <button
               onClick={() => { sound.playClick(); onDelete(record); }}
-              className="flex-1 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-all"
+              className="w-full rounded-xl bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-all sm:flex-1"
             >
               🗑️ Eliminar
             </button>
           )}
           <button
             onClick={() => { sound.playClick(); onClose(); }}
-            className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all"
+            className="w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all sm:w-auto"
           >
             Cerrar
           </button>

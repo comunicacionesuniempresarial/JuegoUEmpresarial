@@ -59,7 +59,7 @@ export function RecordEditModal({ record, onClose, onSave }: RecordEditModalProp
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
       <div
-        className="relative w-full max-w-lg rounded-3xl border border-gray-100 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="relative max-h-[calc(100svh-2rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-3xl border border-gray-100 bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -149,18 +149,18 @@ export function RecordEditModal({ record, onClose, onSave }: RecordEditModalProp
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-3">
+          <div className="flex flex-col items-center gap-2 pt-3 sm:flex-row">
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50"
+              className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50 sm:flex-1"
             >
               {saving ? 'Guardando...' : 'Guardar Cambios'}
             </button>
             <button
               type="button"
               onClick={() => { sound.playClick(); onClose(); }}
-              className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all"
+              className="w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all sm:w-auto"
             >
               Cancelar
             </button>

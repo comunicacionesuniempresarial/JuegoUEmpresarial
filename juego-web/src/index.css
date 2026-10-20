@@ -30,6 +30,36 @@
   background: #F8FAFC;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
+  /* ── Layout tokens ──────────────────────────────────────────────
+     Single source of truth for chrome heights so pages can offset
+     themselves (sticky bars, full-height game screens) without
+     hard-coding pixel values that drift when the header changes. */
+  --header-h: 4rem;          /* 64px — sticky top bar                   */
+  --bottom-nav-h: 4.75rem;   /* 76px — floating mobile nav (incl. gap) */
+  --wheel-size: min(74vw, 36svh, 21rem);
+  --hub-size: calc(var(--wheel-size) * 0.3);
+  --pointer-size: calc(var(--wheel-size) * 0.105);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --wheel-size: min(56vw, 56svh, 30rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --wheel-size: min(44vw, 70svh, 38rem);
+  }
+}
+
+/* Short viewports (phones in landscape) have almost no vertical room:
+   shrink the wheel so the whole game fits without scrolling. */
+@media (max-height: 560px) and (orientation: landscape) {
+  :root {
+    --wheel-size: min(74svh, 44vw, 19rem);
+  }
 }
 
 body {
@@ -37,6 +67,81 @@ body {
   min-width: 320px;
   background: #F8FAFC;
   overflow-x: hidden;
+}
+
+/* ── Game screens lock to the viewport ──────────────────────────────
+   Kiosk pages (ruleta / búsqueda) fill exactly one screen and manage
+   their own internal scroll areas, so the timer and the controls are
+   always reachable. `svh` keeps the bottom controls visible even when
+   the mobile browser chrome is expanded. */
+@layer components {
+  .game-screen {
+    height: 100dvh;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  /* Internal scroll areas should keep momentum scrolling on iOS. */
+  .scroll-touch {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Hide scrollbars on the internal game scroll areas without losing
+     the ability to scroll. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Landscape phones (short + wide viewports)
+   ============================================================ */
+@media (max-height: 560px) and (orientation: landscape) {
+  /* Ruleta: companion + wheel side by side so the wheel stays on screen. */
+  .ruleta-stage {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+  .ruleta-companion {
+    width: auto;
+    max-width: 11rem;
+    flex: 0 0 auto;
+  }
+  .ruleta-companion img {
+    height: 3.5rem;
+  }
+  .ruleta-hint {
+    display: none;
+  }
+
+  /* Búsqueda: collapse the action bar into a single compact row. */
+  .busqueda-actionbar {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+  }
+  .busqueda-actionbar .busqueda-hint {
+    display: none;
+  }
+
+  /* Vertical room is scarce in landscape: drop the status badge (the timer
+     stays) and show more sheets at once so the board stays usable. */
+  .busqueda-hud-badge {
+    display: none;
+  }
+  .busqueda-grid:not(.busqueda-grid--zoomed) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .busqueda-grid--zoomed {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 
 /* Mobile browser chrome changes the visual viewport. Use the safe-area inset
