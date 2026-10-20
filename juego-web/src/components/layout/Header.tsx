@@ -55,7 +55,7 @@ export function Header() {
                 width="175"
                 height="48"
                 decoding="async"
-                className="h-8 w-auto max-w-[80px] object-contain transition-transform group-hover:scale-105 sm:h-8 sm:max-w-[150px] md:h-9 md:max-w-[175px]"
+                className="header-logo h-8 w-auto max-w-[80px] object-contain transition-transform group-hover:scale-105 sm:h-8 sm:max-w-[150px] md:h-9 md:max-w-[175px]"
               />
               <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
@@ -67,7 +67,7 @@ export function Header() {
           {/* Center: Title — always centered via grid. It wraps on narrow
               phones instead of truncating, so the game name stays legible. */}
           <div className="flex min-w-0 flex-col items-center px-1 text-center">
-            <span className="w-full text-[11px] font-black leading-tight tracking-[-0.02em] text-slate-900 sm:whitespace-nowrap sm:text-base md:text-lg lg:text-xl">
+            <span className="header-title w-full text-[11px] font-black leading-tight tracking-[-0.02em] text-slate-900 sm:whitespace-nowrap sm:text-base md:text-lg lg:text-xl">
               ¿Dónde Está Stuttgart?
             </span>
             <span className="mt-0.5 hidden whitespace-nowrap text-[8px] font-black uppercase tracking-[0.18em] text-teal-700 sm:block sm:text-[9px]">
@@ -80,7 +80,7 @@ export function Header() {
             {/* Nav links appear from lg (1024px) up. Below that the floating
                 BottomNav takes over, so phones and tablets are never left
                 without navigation. */}
-            <div className="hidden items-center gap-0.5 lg:flex">
+            <div className="header-nav hidden items-center gap-0.5 lg:flex">
               <NavLink to="/" end className={linkClass} onClick={() => sound.playClick()}>
                 Inicio
               </NavLink>

@@ -101,6 +101,30 @@ body {
    Landscape phones (short + wide viewports)
    ============================================================ */
 @media (max-height: 560px) and (orientation: landscape) {
+  /* The floating dock eats ~96px of a 390px-tall viewport. In landscape
+     there is plenty of horizontal room, so the navigation moves up into
+     the header and the dock is dropped entirely. */
+  .bottom-nav {
+    display: none;
+  }
+  .header-nav {
+    display: flex;
+  }
+  .app-main {
+    padding-bottom: 0;
+  }
+  .offline-banner {
+    bottom: 1rem;
+  }
+
+  /* The header has to fit nav links + title + controls in a short bar. */
+  .header-title {
+    font-size: 0.875rem;
+  }
+  .header-logo {
+    max-width: 120px;
+  }
+
   /* Ruleta: companion + wheel side by side so the wheel stays on screen. */
   .ruleta-stage {
     flex-direction: row;
@@ -127,20 +151,20 @@ body {
     gap: 0.5rem;
     padding: 0.375rem 0.5rem;
   }
-  .busqueda-actionbar .busqueda-hint {
+
+  /* Vertical room is scarce in landscape: drop the status badge (the timer
+     stays) so the sheet gets as much height as possible. */
+  .busqueda-hud-badge,
+  .busqueda-companion {
     display: none;
   }
 
-  /* Vertical room is scarce in landscape: drop the status badge (the timer
-     stays) and show more sheets at once so the board stays usable. */
-  .busqueda-hud-badge {
-    display: none;
-  }
-  .busqueda-grid:not(.busqueda-grid--zoomed) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .busqueda-grid--zoomed {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  /* The board is wide and short here, so the sheet fills the width and is
+     panned vertically instead of being shrunk to the height. */
+  .busqueda-sheet {
+    height: auto;
+    width: 100%;
+    max-width: none;
   }
 }
 

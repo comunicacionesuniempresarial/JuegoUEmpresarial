@@ -22,7 +22,7 @@ export function Layout() {
     >
       <Header />
       <main
-        className={`flex min-h-0 flex-1 flex-col ${
+        className={`app-main flex min-h-0 flex-1 flex-col ${
           isKioskGamePage ? 'pb-24 lg:pb-0 lg:overflow-hidden' : 'pb-24 lg:pb-0'
         }`}
       >

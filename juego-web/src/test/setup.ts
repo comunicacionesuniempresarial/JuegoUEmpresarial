@@ -28,11 +28,14 @@ vi.mock('../lib/supabase', () => ({
   },
 }));
 
-// Mock sound module
+// Mock sound module — mirrors the public API of lib/sound.ts
 vi.mock('../lib/sound', () => ({
   sound: {
     playClick: vi.fn(),
-    playWin: vi.fn(),
-    playLose: vi.fn(),
+    playTick: vi.fn(),
+    playVictory: vi.fn(),
+    playFind: vi.fn(),
+    toggleMute: vi.fn(() => true),
+    getSoundEnabled: vi.fn(() => true),
   },
 }));

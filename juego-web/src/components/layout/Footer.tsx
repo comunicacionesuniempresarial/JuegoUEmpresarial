@@ -12,19 +12,19 @@ export function Footer() {
           <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <Link
               to="/privacidad"
-              className="text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
+              className="inline-flex min-h-8 items-center text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
             >
               Privacidad
             </Link>
             <Link
               to="/cookies"
-              className="text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
+              className="inline-flex min-h-8 items-center text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
             >
               Cookies
             </Link>
             <Link
               to="/terminos-juego"
-              className="text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
+              className="inline-flex min-h-8 items-center text-sm text-gray-500 hover:text-primary transition-colors underline-offset-2 hover:underline"
             >
               Términos del Juego
             </Link>
