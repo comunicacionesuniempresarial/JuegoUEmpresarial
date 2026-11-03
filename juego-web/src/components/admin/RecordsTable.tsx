@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import * as XLSX from 'xlsx';
 import { supabase } from '../../lib/supabase';
 import { sound } from '../../lib/sound';
 import { useAuth } from '../../hooks/useAuth';
@@ -25,6 +26,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
   const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
   const [page, setPage] = useState(1);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   // Modals
   const [detailRecord, setDetailRecord] = useState<Registration | null>(null);
@@ -136,24 +138,124 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
   const totalPages = Math.max(1, Math.ceil(filteredRecords.length / ITEMS_PER_PAGE));
   const paginatedRecords = filteredRecords.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  // Export CSV
-  const exportCSV = () => {
+  // Export Excel — organizado con estilo visual igual que el PDF (Uniempresarial)
+  const exportExcel = () => {
     sound.playClick();
-    const headers = 'Nombre,Teléfono,Correo,Carrera,Juego,Resultado,Fecha\n';
-    const rows = filteredRecords
-      .map((r) => `"${r.nombre}","${r.telefono}","${r.correo || ''}","${r.carrera || ''}","${r.juego}","${r.resultado || ''}","${r.created_at || ''}"`)
-      .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `registros-uniempresarial-${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    setIsExportingExcel(true);
+
+    try {
+      const now = new Date();
+      const fechaExport = now.toLocaleString('es-CO');
+      const juegoLabel = gameFilter === 'all' ? 'Todos' : gameFilter === 'ruleta' ? 'Ruleta' : 'Búsqueda';
+      const dateLabel = quickDate === 'all' ? (dateRange.from || dateRange.to ? 'Rango personalizado' : 'Todos') : quickDate;
+
+      const PRIMARY = 'EF1218';   // Rojo UE
+      const LIGHT = 'F3F5F9';     // Gris claro para filas alternadas
+      const WHITE = 'FFFFFF';
+      const BORDER_COLOR = 'CCCCCC';
+
+      const ws = XLSX.utils.aoa_to_sheet([]);
+
+      // Estilos reutilizables
+      const headerStyle = {
+        fill: { fgColor: { rgb: PRIMARY } },
+        font: { bold: true, color: { rgb: WHITE }, sz: 11 },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+        border: {
+          top: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          bottom: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          left: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          right: { style: 'thin', color: { rgb: BORDER_COLOR } },
+        },
+      };
+
+      const titleStyle = {
+        font: { bold: true, color: { rgb: PRIMARY }, sz: 16 },
+        alignment: { horizontal: 'left', vertical: 'center' },
+      };
+
+      const subtitleStyle = {
+        font: { bold: false, color: { rgb: '666666' }, sz: 10 },
+        alignment: { horizontal: 'left', vertical: 'center' },
+      };
+
+      const bodyStyle = (rowIndex: number) => ({
+        fill: rowIndex % 2 === 0 ? { fgColor: { rgb: WHITE } } : { fgColor: { rgb: LIGHT } },
+        font: { sz: 10 },
+        alignment: { horizontal: 'left', vertical: 'center', wrapText: true },
+        border: {
+          top: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          bottom: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          left: { style: 'thin', color: { rgb: BORDER_COLOR } },
+          right: { style: 'thin', color: { rgb: BORDER_COLOR } },
+        },
+      });
+
+      const headers = ['Nombre', 'Teléfono', 'Correo', 'Carrera', 'Juego', 'Resultado', 'Fecha de registro'];
+
+      const data = filteredRecords.map((r) => {
+        const fecha = r.created_at ? new Date(r.created_at).toLocaleString('es-CO') : '—';
+        const juego = r.juego === 'ruleta' ? '🎡 Ruleta' : '🔍 Búsqueda';
+        return [r.nombre || '—', r.telefono || '—', r.correo || '—', r.carrera || '—', juego, r.resultado || '—', fecha];
+      });
+
+      const allRows = [headers, ...data];
+
+      // Construir la hoja celda por celda para aplicar estilos
+      const dataStartRow = 7; // después del encabezado informativo
+
+      // ── Fila 1: Título ──
+      ws['A1'] = { t: 's', v: 'Registro de Participantes — ¿Dónde Está Stuttgart? (Uniempresarial)', s: titleStyle };
+      ws['A1'].l = { Target: '' }; // evitar hiperlink
+
+      // ── Fila 2: Fecha ──
+      ws['A2'] = { t: 's', v: `Generado el: ${fechaExport}`, s: subtitleStyle };
+
+      // ── Fila 3: Total ──
+      ws['A3'] = { t: 's', v: `Total de registros: ${filteredRecords.length}`, s: subtitleStyle };
+
+      // ── Fila 4: Filtros ──
+      ws['A4'] = { t: 's', v: `Filtro — Juego: ${juegoLabel} | Fecha: ${dateLabel}`, s: subtitleStyle };
+
+      // ── Fila 5: en blanco ──
+      ws['A5'] = { t: 's', v: '', s: subtitleStyle };
+
+      // ── Fila 6: Encabezados de columna ──
+      headers.forEach((h, i) => {
+        const cellRef = XLSX.utils.encode_cell({ r: 5, c: i });
+        ws[cellRef] = { t: 's', v: h, s: headerStyle };
+      });
+
+      // ── Datos ──
+      allRows.slice(1).forEach((row, rowIdx) => {
+        row.forEach((val, colIdx) => {
+          const cellRef = XLSX.utils.encode_cell({ r: dataStartRow + rowIdx, c: colIdx });
+          ws[cellRef] = {
+            t: typeof val === 'string' ? 's' : 'n',
+            v: val,
+            s: bodyStyle(rowIdx),
+          };
+        });
+      });
+
+      // Anchos de columna aproximados
+      const colWidths = [26, 16, 30, 26, 14, 22, 20];
+      ws['!cols'] = colWidths.map((w) => ({ wch: w }));
+
+      // Congelar encabezados
+      ws['!freeze'] = { y: dataStartRow };
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Registros');
+
+      const fileName = `registros-uniempresarial-${now.toISOString().slice(0, 10)}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    } finally {
+      setIsExportingExcel(false);
+    }
   };
 
-  // Export PDF
+  // Export PDF — organizado y con identidad visual Uniempresarial
   const exportPDF = async () => {
     sound.playClick();
     setIsExportingPDF(true);
@@ -162,29 +264,89 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
         import('jspdf'),
         import('jspdf-autotable'),
       ]);
+
       const doc = new jsPDF();
-      doc.setFontSize(18);
-      doc.setTextColor(40);
-      doc.text('Registros — ¿Dónde Está Stuttgart? (Uniempresarial)', 14, 20);
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`Generado el: ${new Date().toLocaleString('es-CO')} | Total: ${filteredRecords.length}`, 14, 28);
-      const tableData = filteredRecords.map((r) => [
-        r.nombre,
-        r.telefono,
-        r.juego.toUpperCase(),
-        r.resultado || '—',
-        r.created_at ? new Date(r.created_at).toLocaleString('es-CO') : '—',
-      ]);
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const primaryColor: [number, number, number] = [239, 18, 24];      // Rojo UE
+      const accentColor: [number, number, number] = [255, 107, 53];      // Naranja UE
+
+      // ── Encabezado de marca ──
+      doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.rect(0, 0, pageWidth, 22, 'F');
+      doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
+      doc.rect(0, 22, pageWidth, 4, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(15);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Registro de Participantes', 14, 12);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text('¿Dónde Está Stuttgart? — Uniempresarial', 14, 19);
+
+      // ── Meta información ──
+      const now = new Date();
+      const fechaExport = now.toLocaleString('es-CO');
+      const juegoLabel = gameFilter === 'all' ? 'Todos' : gameFilter === 'ruleta' ? 'Ruleta' : 'Búsqueda';
+      const dateLabel = quickDate === 'all' ? (dateRange.from || dateRange.to ? 'Rango personalizado' : 'Todos') : quickDate;
+
+      doc.setTextColor(80, 80, 80);
+      doc.setFontSize(8.5);
+      doc.text(`Generado el: ${fechaExport}`, 14, 34);
+      doc.text(`Total de registros: ${filteredRecords.length}`, 14, 40);
+      doc.text(`Filtro — Juego: ${juegoLabel} | Fecha: ${dateLabel}`, 14, 46);
+
+      // ── Tabla ──
+      const tableData = filteredRecords.map((r) => {
+        const fecha = r.created_at ? new Date(r.created_at).toLocaleString('es-CO') : '—';
+        const juego = r.juego === 'ruleta' ? '🎡 Ruleta' : '🔍 Búsqueda';
+        return [
+          r.nombre || '—',
+          r.telefono || '—',
+          r.correo || '—',
+          r.carrera || '—',
+          juego,
+          r.resultado || '—',
+          fecha,
+        ];
+      });
+
       autoTable(doc, {
-        startY: 34,
-        head: [['Nombre', 'Teléfono', 'Juego', 'Resultado', 'Fecha']],
+        startY: 54,
+        head: [['Nombre', 'Teléfono', 'Correo', 'Carrera', 'Juego', 'Resultado', 'Fecha']],
         body: tableData,
         theme: 'striped',
-        headStyles: { fillColor: [255, 107, 107] },
-        styles: { fontSize: 8 },
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: [255, 255, 255],
+          fontSize: 8.5,
+          fontStyle: 'bold',
+          halign: 'center',
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 3,
+          halign: 'left',
+          overflow: 'linebreak',
+          cellWidth: 'wrap',
+        },
+        margin: { left: 14, right: 14 },
       });
-      doc.save(`registros-uniempresarial-${new Date().toISOString().slice(0, 10)}.pdf`);
+
+      // ── Pie de página en cada página ──
+      const totalPages = doc.internal.pages.length;
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(7.5);
+        doc.setTextColor(120, 120, 120);
+        doc.text(
+          `Página ${i} de ${totalPages} — Uniempresarial — Generado el ${fechaExport}`,
+          14,
+          doc.internal.pageSize.getHeight() - 8,
+        );
+      }
+
+      doc.save(`registros-uniempresarial-${now.toISOString().slice(0, 10)}.pdf`);
     } finally {
       setIsExportingPDF(false);
     }
@@ -293,8 +455,8 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportCSV} className="flex items-center gap-1.5 rounded-xl border border-secondary/30 bg-secondary/10 px-3.5 py-2 text-xs font-bold text-secondary hover:bg-secondary/20 active:scale-95 transition-all shadow-xs">
-              <span>📊</span><span>CSV</span>
+            <button onClick={exportExcel} className="flex items-center gap-1.5 rounded-xl border border-secondary/30 bg-secondary/10 px-3.5 py-2 text-xs font-bold text-secondary hover:bg-secondary/20 active:scale-95 transition-all shadow-xs">
+              <span>📊</span><span>{isExportingExcel ? 'Generando…' : 'Excel'}</span>
             </button>
             <button onClick={exportPDF} disabled={isExportingPDF} className="flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-bold text-primary hover:bg-primary/20 active:scale-95 disabled:cursor-wait disabled:opacity-50 transition-all shadow-xs">
               <span>📕</span><span>{isExportingPDF ? 'Generando…' : 'PDF'}</span>

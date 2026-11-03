@@ -92,7 +92,7 @@ describe('RecordsTable', () => {
 
   it('should render export buttons', () => {
     render(<RecordsTable records={mockRecords} loading={false} />);
-    expect(screen.getByText('CSV')).toBeInTheDocument();
+    expect(screen.getByText('Excel')).toBeInTheDocument();
     expect(screen.getByText('PDF')).toBeInTheDocument();
   });
 
