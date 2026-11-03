@@ -154,7 +154,7 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
       const WHITE = 'FFFFFF';
       const BORDER_COLOR = 'CCCCCC';
 
-      const ws = XLSX.utils.aoa_to_sheet([]);
+      const ws: XLSX.WorkSheet = {};
 
       // Estilos reutilizables
       const headerStyle = {
@@ -199,14 +199,10 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
         return [r.nombre || '—', r.telefono || '—', r.correo || '—', r.carrera || '—', juego, r.resultado || '—', fecha];
       });
 
-      const allRows = [headers, ...data];
-
-      // Construir la hoja celda por celda para aplicar estilos
-      const dataStartRow = 7; // después del encabezado informativo
+      const dataStartRow = 7; // después del encabezado informativo (filas 1-6)
 
       // ── Fila 1: Título ──
       ws['A1'] = { t: 's', v: 'Registro de Participantes — ¿Dónde Está Stuttgart? (Uniempresarial)', s: titleStyle };
-      ws['A1'].l = { Target: '' }; // evitar hiperlink
 
       // ── Fila 2: Fecha ──
       ws['A2'] = { t: 's', v: `Generado el: ${fechaExport}`, s: subtitleStyle };
@@ -226,8 +222,8 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
         ws[cellRef] = { t: 's', v: h, s: headerStyle };
       });
 
-      // ── Datos ──
-      allRows.slice(1).forEach((row, rowIdx) => {
+      // ── Datos (empiezan en fila 7, índice 6) ──
+      data.forEach((row, rowIdx) => {
         row.forEach((val, colIdx) => {
           const cellRef = XLSX.utils.encode_cell({ r: dataStartRow + rowIdx, c: colIdx });
           ws[cellRef] = {
@@ -238,11 +234,17 @@ export function RecordsTable({ records: propRecords, loading: propLoading = fals
         });
       });
 
+      // ── Definir el rango de la hoja (crítico: sin esto Excel no ve los datos) ──
+      const lastRow = dataStartRow + data.length - 1; // última fila con datos (1-indexed)
+      const lastCol = 6; // columna G (0-indexed)
+      const lastColLetter = XLSX.utils.encode_col(lastCol);
+      ws['!ref'] = `A1:${lastColLetter}${Math.max(6, lastRow)}`;
+
       // Anchos de columna aproximados
       const colWidths = [26, 16, 30, 26, 14, 22, 20];
       ws['!cols'] = colWidths.map((w) => ({ wch: w }));
 
-      // Congelar encabezados
+      // Congelar encabezados (fila 6)
       ws['!freeze'] = { y: dataStartRow };
 
       const wb = XLSX.utils.book_new();
